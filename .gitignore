@@ -1,0 +1,6 @@
+*/node_modules/
+
+/playwright/test-results/
+/playwright/.temp-report
+/playwright/test-report.txt
+
