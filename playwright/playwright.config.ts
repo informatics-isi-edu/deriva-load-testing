@@ -20,13 +20,16 @@ export default defineConfig({
 
   reporter: 'dot',
 
-  globalSetup: require.resolve('./src/utils/playwright.setup.ts'),
-  globalTeardown: require.resolve('./src/utils/playwright.teardown'),
+  // globalSetup: require.resolve('./src/utils/playwright.setup.ts'),
+  globalTeardown: require.resolve('./src/utils/image.teardown'),
 
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        contextOptions: { recordHar: { path: './image-test.har'}}
+      },
     },
     // {
     //   name: 'firefox',

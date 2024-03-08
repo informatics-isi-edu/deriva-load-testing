@@ -5,13 +5,17 @@ export default class TestReporter {
   private static TEMP_FILE_LOCATION = '.temp-report';
   private static REPORT_FILE_LOCATION = 'test-report.txt';
 
+  private static reportKeys: string[] = [];
+  static setupReport = (keys: string[]) => {
+    TestReporter.reportKeys = keys;
+  }
+
   static addToReport = (obj: any) => {
     const report = TestReporter._getReportObject();
 
-    report['navbar'].push(obj['navbar']);
-    report['main_data'].push(obj['main_data']);
-    report['all_images'].push(obj['all_images']);
-
+    TestReporter.reportKeys.forEach((k) => {
+      report[k].push(obj[k]);
+    });
     fs.writeFileSync('.temp-report', JSON.stringify(report));
   }
 
@@ -20,11 +24,9 @@ export default class TestReporter {
       const rep = fs.readFileSync(TestReporter.TEMP_FILE_LOCATION, 'utf8');
       return JSON.parse(rep);
     } catch (exp) {
-      return {
-        'navbar': [],
-        'main_data': [],
-        'all_images': []
-      };
+      let res = {};
+      TestReporter.reportKeys.forEach((k) => res[k] = []);
+      return res;
     }
   }
 
@@ -55,11 +57,9 @@ export default class TestReporter {
 
     fs.unlinkSync(TestReporter.TEMP_FILE_LOCATION);
 
-    const content = [
-      TestReporter._createStepReport('navbar', val['navbar']),
-      TestReporter._createStepReport('main_data', val['main_data']),
-      TestReporter._createStepReport('all_images', val['all_images']),
-    ].join('\n\n')
+    const content = TestReporter.reportKeys.map((k) => {
+      TestReporter._createStepReport(k, val[k])
+    }).join('\n\n');
 
     console.log(content);
 

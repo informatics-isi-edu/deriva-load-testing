@@ -8,6 +8,8 @@ if (isNaN(num)) {
   num = 2;
 }
 
+TestReporter.setupReport(['navbar', 'main_data', 'all_images']);
+
 for (let id = 0; id < num; id++) {
   test(`test page load ${id}`, async ({ page }) => {
 
@@ -21,9 +23,7 @@ for (let id = 0; id < num; id++) {
 
       endTime = performance.now();
       report['navbar'] = ((endTime - startTime) / 1000).toFixed(3);
-
       startTime = endTime;
-
     })
 
     await test.step('main_data_load', async () => {
