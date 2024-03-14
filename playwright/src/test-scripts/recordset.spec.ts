@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { performance } from 'perf_hooks';
-import TestReporter from './../utils/reporter';
+import TestReporter from '../utils/reporter';
 
 
 let num = parseInt(process.env.TEST_COUNT!)

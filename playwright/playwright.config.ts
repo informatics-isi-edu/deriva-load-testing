@@ -10,7 +10,7 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './src/scripts',
+  testDir: './src/test-scripts',
 
   fullyParallel: true,
 

@@ -8,17 +8,16 @@ module.exports = async ({
   const ss = require('simple-statistics');
   const fs = require('fs');
 
-
   const createSummaryList = (inp) => {
     const arr = inp.map((val) => parseFloat(val));
     return [
       `count: ${arr.length}`,
-      `min: ${min(arr).toFixed(3)}`,
-      `max: ${max(arr).toFixed(3)}`,
-      `mean: ${mean(arr).toFixed(3)}`,
-      `median: ${median(arr).toFixed(3)}`,
-      `p95: ${quantile(arr, .95).toFixed(3)}`,
-      `p99: ${quantile(arr, .99).toFixed(3)}`,
+      `min: ${ss.min(arr).toFixed(3)}`,
+      `max: ${ss.max(arr).toFixed(3)}`,
+      `mean: ${ss.mean(arr).toFixed(3)}`,
+      `median: ${ss.median(arr).toFixed(3)}`,
+      `p95: ${ss.quantile(arr, .95).toFixed(3)}`,
+      `p99: ${ss.quantile(arr, .99).toFixed(3)}`,
     ];
   };
 

@@ -26,7 +26,7 @@ jobs:
           ARTIFACT_FILENAME: test-image-table-report.zip
         with:
           script: |
-            const script = require('./.github/scripts/download-prev-test-image-table-artifact.js')
+            const script = require('./playwright/src/github-scripts/download-prev-test-image-table-artifact.js')
             await script({github, context, core})
 
       - name: Run the test
@@ -39,7 +39,7 @@ jobs:
         continue-on-error: true
         with:
           script: |
-              const script = require('./.github/scripts/test-image-table-summary.js')
+              const script = require('./playwright/src/github-scripts/test-image-table-summary.js')
               await script({core})
 
       - name: Upload the test result
