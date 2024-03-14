@@ -7,7 +7,7 @@ This folder contains several test scenarios that we can run to evaluate the perf
 Before running the scripts, you need to install the dependencies by running the following
 
 ```
-npm clean-install
+make deps
 ```
 
 ## Scripts
@@ -30,6 +30,11 @@ To run this,
 ```
 npx playwright test image
 ```
+
+The following environment variables can be used to customize this script:
+
+- `TEST_COUNT`: How many times we should reload the page (default: 1).
+- `PAGE_SIZE`: What is the page size (default: 100).
 
 
 ### Recordset table

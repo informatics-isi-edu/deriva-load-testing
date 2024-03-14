@@ -4,24 +4,36 @@ jobs:
   test-image-table:
     runs-on: ubuntu-20.04
     env:
-      TEST_COUNT: 2 
+      TEST_COUNT: 2
       PAGE_SIZE: 100
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
-        with:
-          path: deriva-load-testing
+
       - name: Install dependencies
         run: |
-          cd deriva-load-testing/playwright
+          cd playwright
           make deps
+
+      - name: Download previous run results
+        uses: actions/github-script@v6
+        continue-on-error: true
+        env:
+          ARTIFACT_NAME: test-image-table-report
+          ARTIFACT_FILENAME: test-image-table-report.zip
+        with:
+          script: |
+            const script = require('./.github/scripts/download-prev-test-image-table-artifact.js')
+            await script({github, context, core})
+
       - name: Run the test
         run: |
-          cd deriva-load-testing/playwright
+          cd playwright
           npx playwright test image.spec.ts
+
       - name: Upload the test result
         uses: actions/upload-artifact@v4
         with:
-          name: test-image-table-report.json
-          path: deriva-load-testing/playwright/test-report.json
+          name: test-image-table-report
+          path: playwright/test-report.json
           retention-days: 30
