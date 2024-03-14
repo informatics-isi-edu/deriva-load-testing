@@ -22,6 +22,7 @@ This is designed to report how long it took for the image table to show the imag
 Before running the command make sure in the `playwright.config.ts`, the setup and teardown scripts are definde properly (no globalSetup is needed):
 
 ```
+globalSetup: require.resolve('./src/utils/image.setup'),
 globalTeardown: require.resolve('./src/utils/image.teardown')
 ```
 

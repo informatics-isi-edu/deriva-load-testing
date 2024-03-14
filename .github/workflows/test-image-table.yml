@@ -7,11 +7,14 @@ jobs:
       TEST_COUNT: 2
       PAGE_SIZE: 100
     steps:
-      - name: Checkout repository code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Install dependencies
         run: |
+          npm install -g simple-statistics
           cd playwright
           make deps
 
@@ -30,6 +33,12 @@ jobs:
         run: |
           cd playwright
           npx playwright test image.spec.ts
+
+      - name: Create the summary
+        uses: actions/github-script@v6
+        script: |
+            const script = require('./.github/scripts/test-image-table-summary.js')
+            await script({core})
 
       - name: Upload the test result
         uses: actions/upload-artifact@v4

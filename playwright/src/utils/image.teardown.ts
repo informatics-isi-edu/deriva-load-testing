@@ -48,7 +48,7 @@ export default async function globalSetup(config: FullConfig) {
       rep.image_size = image_size;
 
       ImageTestReportService.addToFullReport(rep);
-      ImageTestReportService.removeCurrentReport();
+      // ImageTestReportService.removeCurrentReport();
     }
 
     // unlinkSync(harFilePath);

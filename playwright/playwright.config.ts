@@ -20,7 +20,7 @@ export default defineConfig({
 
   reporter: 'dot',
 
-  // globalSetup: require.resolve('./src/utils/playwright.setup.ts'),
+  globalSetup: require.resolve('./src/utils/image.setup'),
   globalTeardown: require.resolve('./src/utils/image.teardown'),
 
   projects: [
