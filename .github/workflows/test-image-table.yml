@@ -1,0 +1,27 @@
+on: workflow_dispatch
+
+jobs:
+  test-image-table:
+    runs-on: ubuntu-20.04
+    env:
+      TEST_COUNT: 2 
+      PAGE_SIZE: 100
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+        with:
+          path: deriva-load-testing
+      - name: Install dependencies
+        run: |
+          cd deriva-load-testing/playwright
+          make deps
+      - name: Run the test
+        run: |
+          cd deriva-load-testing/playwright
+          npx playwright test image.spec.ts
+      - name: Upload the test result
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-image-table-report.json
+          path: deriva-load-testing/playwright/test-report.json
+          retention-days: 30
