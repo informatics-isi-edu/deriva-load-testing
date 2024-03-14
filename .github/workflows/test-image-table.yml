@@ -36,9 +36,11 @@ jobs:
 
       - name: Create the summary
         uses: actions/github-script@v6
-        script: |
-            const script = require('./.github/scripts/test-image-table-summary.js')
-            await script({core})
+        continue-on-error: true
+        with:
+          script: |
+              const script = require('./.github/scripts/test-image-table-summary.js')
+              await script({core})
 
       - name: Upload the test result
         uses: actions/upload-artifact@v4
