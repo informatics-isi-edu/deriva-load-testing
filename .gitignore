@@ -2,5 +2,7 @@
 
 /playwright/test-results/
 /playwright/.temp-report
-/playwright/test-report.txt
+/playwright/test-report.json
+/playwright/image-test.har
+/playwright/har-files/
 

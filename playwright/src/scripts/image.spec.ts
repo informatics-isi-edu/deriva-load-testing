@@ -4,76 +4,73 @@
  * the time it took from the load of the first image until the last image...
  *
  */
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { performance } from 'perf_hooks';
-import { interval } from '../utils/helpers';
-import TestReporter from './../utils/reporter';
+import { interval, waitForImages, waitForRecordsetMainData } from '../utils/helpers';
+import { ImageTestReport, ImageTestReportService } from '../utils/image-reporter';
 
-let num = parseInt(process.env.TEST_COUNT!)
-if (isNaN(num)) {
-  num = 2;
+let reloadCount = parseInt(process.env.TEST_COUNT!);
+if (isNaN(reloadCount) || reloadCount <= 1) {
+  reloadCount = 1;
 }
+
 let pageSize = parseInt(process.env.PAGE_SIZE!)
 if (isNaN(pageSize)) {
   pageSize = 100;
 }
 
-let absoulteStartTime, startTime, endTime;
+let startTime, endTime;
 
-
-
+const report = new ImageTestReport();
 
 test('load image table and note the image load time', async ({ page }) => {
-  absoulteStartTime = performance.now();
-  startTime = absoulteStartTime;
+  // disable cache
+  page.route('**', route => route.continue());
 
-  console.log(`page size=${pageSize}`)
-  const url = [
-    'https://staging.atlas-d2k.org/chaise/recordset/#2/Gene_Expression:Image/',
-    '*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM4gBUALNAWwCMIwBLAGwH0AhATwBcckQAaEDSAcw5xEIUtQj4AjAAYATABZuo8fRwAPLLTRJqANzyxWGNDgC+AXQumgA@sort(RID)',
-    '?limit=' + pageSize
-  ].join('');
+  await test.step('go to recordset page', async () => {
+    console.log(`page size=${pageSize}, reload count=${reloadCount}`);
 
-  await page.goto(url);
-  await page.locator('.recordset-table').waitFor({ state: 'visible' });
-  await page.locator('.recordest-main-spinner').waitFor({ state: 'detached' });
+    const url = [
+      'https://dev.atlas-d2k.org/chaise/recordset/#2/Gene_Expression:Image/',
+      '*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM4gBUALNAWwCMIwBLAGwH0AhATwBcckQAaEDSAcw5xEIUtQj4AjAAYATABZuo8fRwAPLLTRJqANzyxWGNDgC+AXQumgA@sort(RID)',
+      '?limit=' + pageSize
+    ].join('');
 
-  endTime = performance.now();
-  console.log(`first page load: ${interval(startTime, endTime)}`);
-  startTime = endTime;
-
-  /**
-   * wait for thumbnails to load
-   * https://github.com/microsoft/playwright/issues/6046
-   */
-  await page.waitForFunction(() => {
-    const images = Array.from(document.querySelectorAll('img'));
-    return images.every(img => img.complete && img.naturalWidth !== 0);
+    await page.goto(url);
+    await waitForRecordsetMainData(page);
   });
 
-  endTime = performance.now();
-  console.log(`first page images: ${interval(startTime, endTime)}`);
+  for (let i = 0; i < reloadCount; i++) {
+    await test.step(`${i}: page load`, async () => {
 
-  await page.locator('.chaise-table-next-btn').click();
-  await page.locator('.recordest-main-spinner').waitFor({ state: 'visible' });
-  await page.locator('.recordest-main-spinner').waitFor({ state: 'detached' });
+      startTime = performance.now();
+      await page.reload();
+      await waitForRecordsetMainData(page);
 
-  endTime = performance.now();
-  console.log(`second page load: ${interval(startTime, endTime)}`);
-  startTime = endTime;
+      endTime = performance.now();
+      report.page_load.push(interval(startTime, endTime));
+      startTime = endTime;
+    });
 
+    await test.step(`${i}: all images load`, async () => {
+      await waitForImages(page);
 
-  await page.waitForFunction(() => {
-    const images = Array.from(document.querySelectorAll('img'));
-    return images.every(img => img.complete && img.naturalWidth !== 0);
-  });
+      endTime = performance.now();
+      report.all_images_load.push(interval(startTime, endTime));
+      startTime = endTime;
 
-  endTime = performance.now();
-  console.log(`second page images: ${interval(startTime, endTime)}`);
-
-  console.log(`full runtime: ${interval(absoulteStartTime, endTime)}`);
-
+      if (i === reloadCount - 1) {
+        ImageTestReportService.saveCurrentReport(report);
+      }
+    });
+  }
 });
 
 
-
+/**
+ * do peak hour and then non-peak hour
+ *
+ * most probably the raw data should have the start time, ellapsed time, etc...
+ *
+ * we will run this in multiple time of the day and each will be marked whether it's peak or not.
+ */

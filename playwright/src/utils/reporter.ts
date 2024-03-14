@@ -25,7 +25,7 @@ export default class TestReporter {
       return JSON.parse(rep);
     } catch (exp) {
       let res = {};
-      TestReporter.reportKeys.forEach((k) => res[k] = []);
+      TestReporter.reportKeys.forEach((k) => { res[k] = [] });
       return res;
     }
   }
@@ -34,6 +34,7 @@ export default class TestReporter {
     const arr = inp.map((val) => parseFloat(val));
     return [
       `${name}:`,
+      `count: ............................... ${arr.length}`,
       `min: ................................. ${min(arr).toFixed(3)}`,
       `max: ................................. ${max(arr).toFixed(3)}`,
       `mean: ................................ ${mean(arr).toFixed(3)}`,
@@ -55,10 +56,10 @@ export default class TestReporter {
   static createFullReportFile = () => {
     const val = TestReporter._getReportObject();
 
-    fs.unlinkSync(TestReporter.TEMP_FILE_LOCATION);
+    // fs.unlinkSync(TestReporter.TEMP_FILE_LOCATION);
 
     const content = TestReporter.reportKeys.map((k) => {
-      TestReporter._createStepReport(k, val[k])
+      return TestReporter._createStepReport(k, val[k])
     }).join('\n\n');
 
     console.log(content);
