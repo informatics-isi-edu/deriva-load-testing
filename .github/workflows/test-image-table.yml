@@ -24,7 +24,7 @@ jobs:
         continue-on-error: true
         env:
           ARTIFACT_NAME: test-image-table-files
-          UNWANTED_FILE_NAME: test.har
+          ARTIFACT_FILENAME: test-image-table-files.zip
         with:
           script: |
             const script = require('./playwright/src/github-scripts/download-prev-test-image-table-artifact.js')
@@ -45,6 +45,7 @@ jobs:
         with:
           name: test-image-table-files
           path: |
-            playwright/test-image-table-report.json
+            playwright/test-report.json
+            playwright/test-report-summary.md
             playwright/test.har
           retention-days: 30
