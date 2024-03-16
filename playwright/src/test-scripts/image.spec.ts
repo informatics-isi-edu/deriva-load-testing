@@ -13,6 +13,7 @@ let reloadCount = parseInt(process.env.TEST_COUNT!);
 if (isNaN(reloadCount) || reloadCount <= 1) {
   reloadCount = 1;
 }
+process.env.TEST_COUNT = reloadCount;
 
 let pageSize = parseInt(process.env.PAGE_SIZE!)
 if (isNaN(pageSize)) {
@@ -48,7 +49,7 @@ test('load image table and note the image load time', async ({ page }) => {
       await waitForRecordsetMainData(page);
 
       endTime = performance.now();
-      report.page_load.push(interval(startTime, endTime));
+      report.pw_page_load.push(interval(startTime, endTime));
       startTime = endTime;
     });
 
@@ -56,7 +57,7 @@ test('load image table and note the image load time', async ({ page }) => {
       await waitForImages(page);
 
       endTime = performance.now();
-      report.all_images_load.push(interval(startTime, endTime));
+      report.pw_all_images_load.push(interval(startTime, endTime));
       startTime = endTime;
 
       if (i === reloadCount - 1) {

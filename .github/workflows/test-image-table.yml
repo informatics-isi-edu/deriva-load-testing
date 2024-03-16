@@ -14,7 +14,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install -g simple-statistics
           cd playwright
           make deps
 
@@ -22,8 +21,8 @@ jobs:
         uses: actions/github-script@v6
         continue-on-error: true
         env:
-          ARTIFACT_NAME: test-image-table-report
-          ARTIFACT_FILENAME: test-image-table-report.zip
+          ARTIFACT_NAME: test-image-table-files
+          UNWANTED_FILE_NAME: test.har
         with:
           script: |
             const script = require('./playwright/src/github-scripts/download-prev-test-image-table-artifact.js')
@@ -35,16 +34,15 @@ jobs:
           npx playwright test image.spec.ts
 
       - name: Create the summary
-        uses: actions/github-script@v6
         continue-on-error: true
-        with:
-          script: |
-              const script = require('./playwright/src/github-scripts/test-image-table-summary.js')
-              await script({core})
+        run: |
+          cat test-report-summary.md >> $GITHUB_STEP_SUMMARY
 
       - name: Upload the test result
         uses: actions/upload-artifact@v4
         with:
-          name: test-image-table-report
-          path: playwright/test-report.json
+          name: test-image-table-files
+          path: |
+            playwright/test-image-table-report.json
+            playwright/test.har
           retention-days: 30

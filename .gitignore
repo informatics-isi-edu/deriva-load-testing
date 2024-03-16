@@ -1,8 +1,9 @@
 */node_modules/
 
 /playwright/test-results/
-/playwright/.temp-report
+/playwright/.temp-report.json
 /playwright/test-report.json
-/playwright/image-test.har
+/playwright/test-report-summary.md
+/playwright/test.har
 /playwright/har-files/
 

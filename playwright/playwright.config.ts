@@ -28,7 +28,7 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        contextOptions: { recordHar: { path: './image-test.har'}}
+        contextOptions: { recordHar: { path: './test.har'}}
       },
     },
     // {
