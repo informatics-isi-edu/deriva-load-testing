@@ -1,15 +1,15 @@
-# on: workflow_dispatch
+on: workflow_dispatch
 
 # run at 10am, 2pm, 6pm PST through the weekend
-on:
-  schedule:
-    - cron: '0 17,21,1 * * SAT,SUN,MON'
+# on:
+#   schedule:
+#     - cron: '0 17,21,1 * * SAT,SUN,MON'
 
 name: Test Image load times
 
 jobs:
   test-image-table:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     env:
       TEST_COUNT: 5
       PAGE_SIZE: 100
