@@ -38,7 +38,7 @@ jobs:
       - name: Run the test
         run: |
           cd playwright
-          npx playwright test image.spec.ts
+          ./run.sh
 
       - name: Upload the test result
         uses: actions/upload-artifact@v4
