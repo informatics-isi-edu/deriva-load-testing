@@ -93,7 +93,7 @@ export class ImageTestReportService {
 
     // for the last group
     currReport.runs.push({
-      min_t0: min_t0,
+      min_t0: convertDateToLocal(min_t0),
 
       num_images: runNumImages,
       avg_file_size: runTotalImageSize / runNumImages,
