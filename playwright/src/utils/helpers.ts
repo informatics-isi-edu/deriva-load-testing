@@ -19,3 +19,6 @@ export const waitForRecordsetMainData = async (page) => {
   await page.locator('.recordest-main-spinner').waitFor({ state: 'detached' });
 }
 
+export const convertDateToLocal = (date: any) => {
+  return new Date(date).toLocaleString("en-US", { timeZone: 'America/Los_Angeles' })
+}

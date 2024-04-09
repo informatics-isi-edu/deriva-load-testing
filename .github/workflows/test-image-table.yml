@@ -40,17 +40,11 @@ jobs:
           cd playwright
           npx playwright test image.spec.ts
 
-      - name: Create the summary
-        continue-on-error: true
-        run: |
-          cat playwright/test-report-summary.md >> $GITHUB_STEP_SUMMARY
-
       - name: Upload the test result
         uses: actions/upload-artifact@v4
         with:
           name: test-image-table-files
           path: |
             playwright/test-report.json
-            playwright/test-report-summary.md
             playwright/test.har
           retention-days: 30
