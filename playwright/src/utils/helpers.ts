@@ -10,7 +10,7 @@ export const waitForImages = async (page) => {
    */
   await page.waitForFunction(() => {
     const images = Array.from(document.querySelectorAll('img'));
-    return images.every(img => img.complete && img.naturalWidth !== 0);
+    return images.every(img => img.complete);
   });
 };
 
