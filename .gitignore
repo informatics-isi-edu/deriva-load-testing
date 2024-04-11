@@ -4,6 +4,8 @@
 /playwright/.temp-report.json
 /playwright/test-report.json
 /playwright/test-report-summary.md
+/playwright/test-report-signed.json
+/playwright/test-report-unsigned.json
 /playwright/test.har
 /playwright/har-files/
 

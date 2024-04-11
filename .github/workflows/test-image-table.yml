@@ -35,16 +35,18 @@ jobs:
             const script = require('./playwright/src/github-scripts/download-prev-test-image-table-artifact.js')
             await script({github, context, core})
 
-      - name: Run the test
+      - name: Run the tests
         run: |
           cd playwright
-          ./run.sh
+          ./run-signed.sh
+          ./run-unsigned.sh
 
       - name: Upload the test result
         uses: actions/upload-artifact@v4
         with:
           name: test-image-table-files
           path: |
-            playwright/test-report.json
+            playwright/test-report-signed.json
+            playwright/test-report-unsigned.json
             playwright/test.har
           retention-days: 30
