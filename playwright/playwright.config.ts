@@ -17,11 +17,16 @@ export default defineConfig({
   globalSetup: require.resolve('./src/utils/image.setup'),
   globalTeardown: require.resolve('./src/utils/image.teardown'),
 
+  use: {
+    ignoreHTTPSErrors: true,
+  },
+
   projects: [
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
+        ignoreHTTPSErrors: true,
         contextOptions: { recordHar: { path: './test.har'}}
       },
     },
