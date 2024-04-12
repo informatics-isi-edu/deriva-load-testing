@@ -16,11 +16,14 @@ if (isNaN(pageSize)) {
   pageSize = 100;
 }
 
-test('load image table and note the image load time', async ({ page }) => {
+test('load image table and note the image load time', async ({ page, browser, browserName }) => {
   // disable cache
   page.route('**', route => route.continue());
 
   await test.step('go to recordset page', async () => {
+    console.log(`browser information: ${browserName} ${browser.version()}`);
+
+
     console.log(`page size=${pageSize}, number of runs=${reloadCount}`);
 
     const url = process.env.LOAD_TEST_CHAISE_URL + '?limit=' + pageSize;
