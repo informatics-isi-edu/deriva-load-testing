@@ -1,7 +1,8 @@
 import { type FullConfig } from '@playwright/test';
 import path from 'path';
 import { readFileSync, unlinkSync } from 'fs';
-import { ImageTestReportService } from './image-reporter';
+import { ImageReporter } from './image-reporter';
+import { ImageReporterSigned } from './image-reporter-signed';
 
 export default async function globalSetup(config: FullConfig) {
   try {
@@ -12,13 +13,19 @@ export default async function globalSetup(config: FullConfig) {
 
     const isSigned = process.env.LOAD_TEST_SIGNED == 'true';
 
-    const currReport = ImageTestReportService.processHARFile(harContent, isSigned);
+    const currReport = isSigned ? ImageReporterSigned.processHARFile(harContent) : ImageReporter.processHARFile(harContent);
 
-    console.log('current measurement:')
+    const reportFileLocation = isSigned ? ImageReporterSigned.REPORT_LOCATION : ImageReporter.REPORT_LOCATION;
+
+    console.log(`current measurement (${isSigned ? 'unsigned': 'signed'}):`)
     console.log(JSON.stringify(currReport, undefined, 2));
 
-    ImageTestReportService.addToFullReport(currReport, isSigned);
-    console.log('current measurement added to the full report');
+    if (isSigned) {
+      ImageReporterSigned.addToFullReport(currReport);
+    } else {
+      ImageReporter.addToFullReport(currReport);
+    }
+    console.log(`current measurement added to the full report: ${reportFileLocation}`);
 
   } catch (exp) {
     console.log('something went wrong')

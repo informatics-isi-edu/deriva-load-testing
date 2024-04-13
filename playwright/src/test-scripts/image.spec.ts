@@ -7,7 +7,7 @@ import { test } from '@playwright/test';
 import { waitForImages, waitForRecordsetMainData } from '../utils/helpers';
 
 let reloadCount = parseInt(process.env.LOAD_TEST_RUN_COUNT!);
-if (isNaN(reloadCount) || reloadCount <= 1) {
+if (isNaN(reloadCount) || reloadCount < 1) {
   reloadCount = 10;
 }
 

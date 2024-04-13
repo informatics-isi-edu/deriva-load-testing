@@ -1,16 +1,12 @@
-import { min, max, mean, median, quantile } from 'simple-statistics'
 import fs from 'fs';
 import { convertDateToLocal } from './helpers';
 
-export class ImageTestReportService {
-  private static UNSIGNED_FILE = 'test-report-unsigned.json';
-  private static SIGNED_FILE = 'test-report-signed.json';
+export class ImageReporter {
+  static REPORT_LOCATION = 'test-report-unsigned.json';
 
-
-  static getFullReport(isSigned: boolean): any {
+  static getFullReport(): any {
     try {
-      const loc = isSigned ? ImageTestReportService.SIGNED_FILE : ImageTestReportService.UNSIGNED_FILE;
-      const rep = fs.readFileSync(loc, 'utf8');
+      const rep = fs.readFileSync(ImageReporter.REPORT_LOCATION, 'utf8');
       return JSON.parse(rep);
     } catch (exp) {
       console.log('couldn\'t find any existing report, going to create a new one.');
@@ -18,16 +14,15 @@ export class ImageTestReportService {
     }
   }
 
-  static saveFullReport(obj: any, isSigned: boolean) {
+  static saveFullReport(obj: any) {
     const content = JSON.stringify(obj, undefined, 2);
-    const loc = isSigned ? ImageTestReportService.SIGNED_FILE : ImageTestReportService.UNSIGNED_FILE;
-    fs.writeFileSync(loc, content);
+    fs.writeFileSync(ImageReporter.REPORT_LOCATION, content);
   }
 
-  static processHARFile(harContent: any, isSigned: boolean): any {
+  static processHARFile(harContent: any): any {
     let measuermentHourGroup: string | null = null;
     let runNumber = 0, currRunNumber = 0, min_t0 = 0, max_t1 = 0, curr_t1 = 0;
-    let runNumFiles = 0, runTotalImageSize = 0;
+    let runNumFiles = 0, runTotalImageSize = 0, runNumRedirectRequests = 0;
     let runNumBrowserCached = 0, runNumServerCached = 0;
     let currReport: any = {
       summary: {},
@@ -75,7 +70,9 @@ export class ImageTestReportService {
             unsigned_url_throughput: (max_t1 - min_t0) / runNumFiles,
 
             num_server_cached_images: runNumServerCached,
-            num_browser_cached_images: runNumBrowserCached
+            num_browser_cached_images: runNumBrowserCached,
+
+            num_signed: runNumRedirectRequests
           });
         }
 
@@ -87,6 +84,12 @@ export class ImageTestReportService {
         runTotalImageSize = 0;
         runNumBrowserCached = 0;
         runNumServerCached = 0;
+        runNumRedirectRequests = 0;
+      }
+
+      // we expect this request to be 200, but it was 303 report it
+      if (e.response && e.response.status === 303) {
+        runNumRedirectRequests += 1;
       }
 
       runNumFiles += 1;
@@ -105,11 +108,13 @@ export class ImageTestReportService {
       unsigned_url_throughput: (max_t1 - min_t0) / runNumFiles,
 
       num_server_cached_images: runNumServerCached,
-      num_browser_cached_images: runNumBrowserCached
+      num_browser_cached_images: runNumBrowserCached,
+
+      num_signed: runNumRedirectRequests
     });
 
     // create summary
-    let measuermentTotalImageSize = 0, measurementNumFiles = 0,
+    let measuermentTotalImageSize = 0, measurementNumFiles = 0, measurementNumSigned = 0,
       measurementTotalUnsignedURLDuration = 0, measurementTotalUnsignedURLThroughput = 0,
       measurementTotalBrowserCached = 0, measurementTotalServerCached = 0;
     currReport.runs.forEach((r) => {
@@ -119,6 +124,7 @@ export class ImageTestReportService {
       measurementTotalUnsignedURLThroughput += r.unsigned_url_throughput;
       measurementTotalBrowserCached += r.num_browser_cached_images;
       measurementTotalServerCached += r.num_server_cached_images;
+      measurementNumSigned += r.num_signed;
     });
 
     currReport.summary = {
@@ -129,15 +135,18 @@ export class ImageTestReportService {
       avg_file_size: measuermentTotalImageSize / measurementNumFiles,
       unsigned_url_duration: measurementTotalUnsignedURLDuration / currReport.runs.length,
       unsigned_url_throughput: measurementTotalUnsignedURLThroughput / currReport.runs.length,
+
       num_server_cached_images: measurementTotalBrowserCached,
-      num_browser_cached_images: measurementTotalServerCached
+      num_browser_cached_images: measurementTotalServerCached,
+
+      num_signed: measurementNumSigned
     };
 
     return currReport;
   }
 
-  static addToFullReport(currRun: any, isSigned: boolean) : any {
-    let fullReport = ImageTestReportService.getFullReport(isSigned);
+  static addToFullReport(currRun: any) : any {
+    let fullReport = ImageReporter.getFullReport();
 
     const key = new Date(currRun.summary.min_t0).getHours();
 
@@ -151,7 +160,8 @@ export class ImageTestReportService {
           unsigned_url_duration: currRun.summary.unsigned_url_duration,
           unsigned_url_throughput: currRun.summary.unsigned_url_throughput,
           num_server_cached_images: currRun.summary.num_server_cached_images,
-          num_browser_cached_images: currRun.summary.num_browser_cached_images
+          num_browser_cached_images: currRun.summary.num_browser_cached_images,
+          num_signed: currRun.summary.num_signed
         },
         measurements: [
           currRun
@@ -161,6 +171,7 @@ export class ImageTestReportService {
       const prevReportForKey = fullReport[key];
 
       let totalNumFiles = prevReportForKey.summary.num_files + currRun.summary.num_files;
+      let totalNumSigned = prevReportForKey.summary.num_signed + currRun.summary.num_signed;
       let totalFileSize = 0, totalUnsignedURLDuration = 0, totalUnsignedURLThroughput = 0, totalNumRuns = 0;
 
       prevReportForKey.measurements.push(currRun);
@@ -178,13 +189,14 @@ export class ImageTestReportService {
         unsigned_url_duration: totalUnsignedURLDuration / totalNumRuns,
         unsigned_url_throughput: totalUnsignedURLThroughput / totalNumRuns,
         num_server_cached_images: prevReportForKey.summary.num_server_cached_images + currRun.summary.num_server_cached_images,
-        num_browser_cached_images: prevReportForKey.summary.num_server_cached_images + currRun.summary.num_browser_cached_images
+        num_browser_cached_images: prevReportForKey.summary.num_server_cached_images + currRun.summary.num_browser_cached_images,
+        num_signed: totalNumSigned
       };
       prevReportForKey.summary = newSummary;
 
     }
 
-    ImageTestReportService.saveFullReport(fullReport, isSigned);
+    ImageReporter.saveFullReport(fullReport);
   }
 
 }
