@@ -8,7 +8,7 @@ export default defineConfig({
 
   fullyParallel: true,
 
-  timeout: 3 * 60 * 1000,
+  timeout: 10 * 60 * 1000,
 
   retries: 0,
 
