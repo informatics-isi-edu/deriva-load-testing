@@ -17,6 +17,9 @@ if (isNaN(pageSize)) {
 }
 
 test('load image table and note the image load time', async ({ page, browser, browserName }) => {
+  // make sure the timeout is a function of the number of reloads.
+  test.setTimeout((reloadCount * 2) * 60 * 1000);
+
   // disable cache
   page.route('**', route => route.continue());
 
@@ -40,7 +43,7 @@ test('load image table and note the image load time', async ({ page, browser, br
     });
 
     await test.step(`${i}: all images load`, async () => {
-      await waitForImages(page);
+      await waitForImages(page, pageSize * 1000);
     });
   }
 });

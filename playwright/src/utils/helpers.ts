@@ -1,9 +1,11 @@
-export function interval(start, end) {
+import { Page } from "@playwright/test";
+
+export function interval(start: number, end: number) {
   return end - start;
 }
 
 
-export const waitForImages = async (page) => {
+export const waitForImages = async (page: Page, timeout?: number) => {
   /**
    * wait for thumbnails to load
    * https://github.com/microsoft/playwright/issues/6046
@@ -11,7 +13,7 @@ export const waitForImages = async (page) => {
   await page.waitForFunction(() => {
     const images = Array.from(document.querySelectorAll('img'));
     return images.every(img => img.complete && img.naturalWidth !== 0);
-  });
+  }, undefined, { timeout });
 };
 
 export const waitForRecordsetMainData = async (page) => {

@@ -18,14 +18,24 @@ URLs=(
   # "https://staging.atlas-d2k.org/chaise/recordset/#2/Gene_Expression:Image/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFMDWOAnnCEjmNgBYC0ARigB4gA0p5Vc8IAKpWgLa0IYAJYAbagFYAjACYA0iAC6AX1VA@sort(RID)"
 )
 
+PAGE_SIZES=(
+  25
+  50
+  100
+  200
+)
+
 export LOAD_TEST_RUN_COUNT=10
-export LOAD_TEST_PAGE_SIZE=200
 export LOAD_TEST_SIGNED=false
 
 echo "Running experiment with signed: $LOAD_TEST_SIGNED"
 
 for URL in ${URLs[*]}
 do
-  export LOAD_TEST_CHAISE_URL="$URL";
-  npx playwright test image.spec.ts;
+  for PAGE_SIZE in ${PAGE_SIZES[*]}
+  do
+    export LOAD_TEST_CHAISE_URL="$URL";
+    export LOAD_TEST_PAGE_SIZE="$PAGE_SIZE";
+    npx playwright test image.spec.ts;
+  done
 done

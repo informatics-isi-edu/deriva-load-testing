@@ -12,7 +12,7 @@ export default defineConfig({
 
   retries: 0,
 
-  reporter: 'list',
+  reporter: [['list', { printSteps: true }]],
 
   globalSetup: require.resolve('./src/utils/image.setup'),
   globalTeardown: require.resolve('./src/utils/image.teardown'),
@@ -27,7 +27,13 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         ignoreHTTPSErrors: true,
-        contextOptions: { recordHar: { path: './test.har'}}
+        contextOptions: {
+          recordHar: {
+            path: './test.har',
+            // without the following the HAR file would be too large and in some cases would throw "RangeError: Invalid string length"
+            content: 'omit'
+          }
+        }
       },
     },
     // {

@@ -17,7 +17,7 @@ export default async function globalSetup(config: FullConfig) {
 
     const reportFileLocation = isSigned ? ImageReporterSigned.REPORT_LOCATION : ImageReporter.REPORT_LOCATION;
 
-    console.log(`current measurement (${isSigned ? 'unsigned': 'signed'}):`)
+    console.log(`current measurement (${isSigned ? 'signed': 'unsigned'}):`)
     console.log(JSON.stringify(currReport, undefined, 2));
 
     if (isSigned) {
