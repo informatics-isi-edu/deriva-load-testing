@@ -26,7 +26,7 @@ PAGE_SIZES=(
 )
 
 export LOAD_TEST_RUN_COUNT=10
-export LOAD_TEST_SIGNED=false
+export LOAD_TEST_SIGNED=true
 
 echo "Running experiment with signed: $LOAD_TEST_SIGNED"
 
