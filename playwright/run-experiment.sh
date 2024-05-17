@@ -36,6 +36,6 @@ do
   do
     export LOAD_TEST_CHAISE_URL="$URL";
     export LOAD_TEST_PAGE_SIZE="$PAGE_SIZE";
-    npx playwright test image.spec.ts;
+    time npx playwright test image.spec.ts;
   done
 done
