@@ -8,4 +8,4 @@
 /playwright/test-report-unsigned.json
 /playwright/test.har
 /playwright/har-files/
-
+/playwright/.env
