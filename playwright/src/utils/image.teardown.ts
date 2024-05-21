@@ -27,6 +27,13 @@ export default async function globalSetup(config: FullConfig) {
     }
     console.log(`current measurement added to the full report: ${reportFileLocation}`);
 
+    console.log('saving in db...');
+    if (isSigned) {
+      await ImageReporterSigned.saveInDB(currReport);
+    } else {
+      await ImageReporter.saveInDB(currReport);
+    }
+
   } catch (exp) {
     console.log('something went wrong')
     console.log(exp);

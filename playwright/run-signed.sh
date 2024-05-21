@@ -1,4 +1,5 @@
 #!/bin/bash
+# NOTE don't forget to define LOAD_TEST_CLIENT_NAME and LOAD_TEST_AUTH_COOKIE before running this script
 
 # 32K
 export LOAD_TEST_CHAISE_URL="https://staging.atlas-d2k.org/chaise/recordset/#2/Gene_Expression:Image/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFMDWOAnnCEjmNgBYC0ARigB4gA0p5Vc8IAKpWgLa0IYAJYAbagGYATAGkQAXQC+yoA@sort(RID)"
@@ -21,4 +22,4 @@ export LOAD_TEST_HATRAC_URL_PREFIX="https://staging.atlas-d2k.org/hatrac/resourc
 export LOAD_TEST_HATRAC_REDIRECT_URL_PREFIX="https://vm012.hive.psc.edu:9000/atlas-d2k"
 export LOAD_TEST_SIGNED=true
 
-npx playwright test image.spec.ts
+time npx playwright test image.spec.ts --workers 1

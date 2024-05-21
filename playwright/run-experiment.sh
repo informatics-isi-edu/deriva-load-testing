@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# NOTE don't forget to define LOAD_TEST_CLIENT_NAME and LOAD_TEST_AUTH_COOKIE before running this script
 
 export LOAD_TEST_ERMREST_MAIN_URL_PREFIX="https://staging.atlas-d2k.org/ermrest/catalog/2/attributegroup/M:=Gene_Expression:Image/*::ciregexp::Thumbnail"
 export LOAD_TEST_HATRAC_URL_PREFIX="https://staging.atlas-d2k.org/hatrac/resources/gene_expression"
@@ -34,8 +34,8 @@ for URL in ${URLs[*]}
 do
   for PAGE_SIZE in ${PAGE_SIZES[*]}
   do
-    export LOAD_TEST_CHAISE_URL="$URL";
-    export LOAD_TEST_PAGE_SIZE="$PAGE_SIZE";
-    time npx playwright test image.spec.ts;
+    export LOAD_TEST_CHAISE_URL="$URL"
+    export LOAD_TEST_PAGE_SIZE="$PAGE_SIZE"
+    time npx playwright test image.spec.ts --workers 1
   done
 done

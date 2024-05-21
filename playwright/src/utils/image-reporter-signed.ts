@@ -1,4 +1,5 @@
 import fs from 'fs';
+import axios from 'axios';
 import { convertDateToLocal } from './helpers';
 
 export class ImageReporterSigned {
@@ -187,7 +188,7 @@ export class ImageReporterSigned {
     return currReport;
   }
 
-  static addToFullReport(currRun: any) : any {
+  static addToFullReport(currRun: any): any {
     let fullReport = ImageReporterSigned.getFullReport();
 
     const key = new Date(currRun.summary.min_t0).getHours();
@@ -256,4 +257,31 @@ export class ImageReporterSigned {
     ImageReporterSigned.saveFullReport(fullReport);
   }
 
+  static async saveInDB(currRun: any) {
+    const url = 'https://dev.derivacloud.org/ermrest/catalog/83752/entity/load-testing:signed_url_experiment';
+    const data = currRun.runs.map((r) => {
+      return {
+        // min_t0: new Date(r.min_t0).toISOString(),
+        min_t0: r.min_t0,
+        time_of_day: new Date(currRun.summary.min_t0).getHours(),
+        client: process.env.LOAD_TEST_CLIENT_NAME,
+        num_files: r.num_files,
+        avg_file_size: r.avg_file_size,
+        signed_url_throughput: r.signed_url_throughput,
+        min_io_throughput: r.min_io_throughput,
+        client_throughput: r.client_throughput,
+        num_server_cached_images: r.num_server_cached_images,
+        num_browser_cached_images: r.num_browser_cached_images,
+        num_unsigned: r.num_unsigned
+      };
+    });
+
+    try {
+      const { data: res } = await axios.post(url, data, { headers: { Cookie: process.env.LOAD_TEST_AUTH_COOKIE } });
+      console.log('saved the report in the database.');
+    } catch (err) {
+      console.log('unable to save the report in the database.');
+      console.log(err);
+    }
+  }
 }

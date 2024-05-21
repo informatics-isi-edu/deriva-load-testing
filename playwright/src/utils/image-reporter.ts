@@ -1,4 +1,5 @@
 import fs from 'fs';
+import axios from 'axios';
 import { convertDateToLocal } from './helpers';
 
 export class ImageReporter {
@@ -197,6 +198,32 @@ export class ImageReporter {
     }
 
     ImageReporter.saveFullReport(fullReport);
+  }
+
+  static async saveInDB(currRun: any) {
+    const url = 'https://dev.derivacloud.org/ermrest/catalog/83752/entity/load-testing:unsigned_url_experiment';
+    const data = currRun.runs.map((r) => {
+      return {
+        // min_t0: new Date(r.min_t0).toISOString(),
+        min_t0: r.min_t0,
+        time_of_day: new Date(currRun.summary.min_t0).getHours(),
+        client: process.env.LOAD_TEST_CLIENT_NAME,
+        num_files: r.num_files,
+        avg_file_size: r.avg_file_size,
+        unsigned_url_throughput: r.unsigned_url_throughput,
+        num_server_cached_images: r.num_server_cached_images,
+        num_browser_cached_images: r.num_browser_cached_images,
+        num_signed: r.num_signed
+      };
+    });
+
+    try {
+      const { data: res } = await axios.post(url, data, { headers: { Cookie: process.env.LOAD_TEST_AUTH_COOKIE } });
+      console.log('saved the report in the database.');
+    } catch (err) {
+      console.log('unable to save the report in the database.');
+      console.log(err);
+    }
   }
 
 }
