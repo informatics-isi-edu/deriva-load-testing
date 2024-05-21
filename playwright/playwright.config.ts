@@ -1,4 +1,16 @@
 import { defineConfig, devices } from '@playwright/test';
+import path from 'path';
+import dotenv from 'dotenv';
+
+// Read from default ".env" file.
+dotenv.config({ override: true });
+
+const clientName = process.env.LOAD_TEST_CLIENT_NAME;
+const cookie = process.env.LOAD_TEST_AUTH_COOKIE;
+if (!clientName || !cookie) {
+ throw new Error('LOAD_TEST_CLIENT_NAME and LOAD_TEST_AUTH_COOKIE are needed');
+}
+console.log(`client name: ${clientName}\nauth cookie: ${cookie}`);
 
 /**
  * See https://playwright.dev/docs/test-configuration.
