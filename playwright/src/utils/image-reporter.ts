@@ -1,6 +1,6 @@
 import fs from 'fs';
 import axios from 'axios';
-import { convertDateToLocal } from './helpers';
+import { convertDateToLocal, REPORT_TABLES } from './helpers';
 
 export class ImageReporter {
   static REPORT_LOCATION = 'test-report-unsigned.json';
@@ -201,13 +201,13 @@ export class ImageReporter {
   }
 
   static async saveInDB(currRun: any) {
-    const url = 'https://dev.derivacloud.org/ermrest/catalog/83752/entity/load-testing:unsigned_url_experiment';
     const data = currRun.runs.map((r) => {
       return {
         // min_t0: new Date(r.min_t0).toISOString(),
         min_t0: r.min_t0,
         time_of_day: new Date(currRun.summary.min_t0).getHours(),
         client: process.env.LOAD_TEST_CLIENT_NAME,
+        file_size_label: process.env.LOAD_TEST_FILE_SIZE_LABEL,
         num_files: r.num_files,
         avg_file_size: r.avg_file_size,
         unsigned_url_throughput: r.unsigned_url_throughput,
@@ -218,7 +218,7 @@ export class ImageReporter {
     });
 
     try {
-      const { data: res } = await axios.post(url, data, { headers: { Cookie: process.env.LOAD_TEST_AUTH_COOKIE } });
+      const { data: res } = await axios.post(REPORT_TABLES.UNSIGNED, data, { headers: { Cookie: process.env.LOAD_TEST_AUTH_COOKIE } });
       console.log('saved the report in the database.');
     } catch (err) {
       console.log('unable to save the report in the database.');

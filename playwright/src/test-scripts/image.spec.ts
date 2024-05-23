@@ -6,8 +6,8 @@
 import { test } from '@playwright/test';
 import { waitForImages, waitForRecordsetMainData } from '../utils/helpers';
 
-let reloadCount = parseInt(process.env.LOAD_TEST_RUN_COUNT!);
-if (isNaN(reloadCount) || reloadCount < 1) {
+let reloadCount = parseInt(process.env.LOAD_TEST_RELOAD_COUNT!);
+if (isNaN(reloadCount)) {
   reloadCount = 10;
 }
 
@@ -24,17 +24,20 @@ test('load image table and note the image load time', async ({ page, browser, br
   page.route('**', route => route.continue());
 
   await test.step('go to recordset page', async () => {
-    console.log(`browser information: ${browserName} ${browser.version()}`);
-
-
-    console.log(`page size=${pageSize}, number of runs=${reloadCount}`);
-
     const url = process.env.LOAD_TEST_CHAISE_URL + '?limit=' + pageSize;
-    console.log(`chaise url:${url}`);
+
+    console.log(`browser information: ${browserName} ${browser.version()}`);
+    console.log(`chaise url: ${url}`);
 
     await page.goto(url);
     await waitForRecordsetMainData(page);
   });
+
+  if (reloadCount === 0) {
+    await test.step('wait for all images to load', async () => {
+      await waitForImages(page, pageSize * 1000);
+    });
+  }
 
   for (let i = 0; i < reloadCount; i++) {
     await test.step(`${i}: page load`, async () => {

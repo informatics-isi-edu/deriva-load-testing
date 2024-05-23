@@ -24,3 +24,11 @@ export const waitForRecordsetMainData = async (page) => {
 export const convertDateToLocal = (date: any) => {
   return new Date(date).toLocaleString("en-US", { timeZone: 'America/Los_Angeles' })
 }
+
+
+export const REPORT_TABLES = {
+  // SIGNED: 'https://dev.derivacloud.org/ermrest/catalog/83752/entity/load-testing:signed_url_experiment',
+  // UNSIGNED: 'https://dev.derivacloud.org/ermrest/catalog/83752/entity/load-testing:unsigned_url_experiment',
+  SIGNED: 'https://dev.derivacloud.org/ermrest/catalog/83773/entity/load-testing:signed_url_experiment',
+  UNSIGNED: 'https://dev.derivacloud.org/ermrest/catalog/83773/entity/load-testing:unsigned_url_experiment',
+}

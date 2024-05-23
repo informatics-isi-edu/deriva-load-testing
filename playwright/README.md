@@ -46,7 +46,7 @@ npx playwright test image
 
 The following environment variables can be used to customize this script:
 
-- `LOAD_TEST_RUN_COUNT`: How many times we should reload the page (default: 5).
+- `LOAD_TEST_RELOAD_COUNT`: How many times we should reload the page (default: 10).
 - `LOAD_TEST_PAGE_SIZE`: What is the page size (default: 100).
 - `LOAD_TEST_CHAISE_URL`: the image recordset url (has no default and is needed)
 - `LOAD_TEST_ERMREST_MAIN_URL_PREFIX`: the ermrest url prefix that can be used to identify the main request (has no default and is needed).

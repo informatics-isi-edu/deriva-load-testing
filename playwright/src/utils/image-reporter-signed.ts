@@ -1,6 +1,6 @@
 import fs from 'fs';
 import axios from 'axios';
-import { convertDateToLocal } from './helpers';
+import { convertDateToLocal, REPORT_TABLES } from './helpers';
 
 export class ImageReporterSigned {
   static REPORT_LOCATION = 'test-report-signed.json';
@@ -32,6 +32,10 @@ export class ImageReporterSigned {
       runs: []
     };
 
+    // if we're not reloading this should be 1, if we're reloading this should be 2
+    const reloadCount = parseInt(process.env.LOAD_TEST_RELOAD_COUNT!);
+    const firstRunNumber = isNaN(reloadCount) || reloadCount > 0 ? 2 : 1;
+
     harContent.log.entries.forEach((e: any) => {
       if (measuermentHourGroup === null) {
         measuermentHourGroup = new Date(convertDateToLocal(e.startedDateTime)).getHours().toString();
@@ -43,7 +47,7 @@ export class ImageReporterSigned {
       }
 
       // the first group is the initial load which we don't care about.
-      if (runNumber < 2) return;
+      if (runNumber < firstRunNumber) return;
 
       const isDerivaRequest = e.request.url.startsWith(process.env.LOAD_TEST_HATRAC_URL_PREFIX) && e.time !== -1;
       const isActualImageRequest = e.request.url.startsWith(process.env.LOAD_TEST_HATRAC_REDIRECT_URL_PREFIX) && e.time !== -1;
@@ -64,7 +68,7 @@ export class ImageReporterSigned {
       // we've now started a new group
       if (runNumber !== currRunNumber) {
         // add the previous run before capturing the current run
-        if (runNumber !== 2) {
+        if (runNumber !== firstRunNumber) {
           currReport.runs.push({
             min_t0: convertDateToLocal(min_t0),
 
@@ -258,13 +262,13 @@ export class ImageReporterSigned {
   }
 
   static async saveInDB(currRun: any) {
-    const url = 'https://dev.derivacloud.org/ermrest/catalog/83752/entity/load-testing:signed_url_experiment';
     const data = currRun.runs.map((r) => {
       return {
         // min_t0: new Date(r.min_t0).toISOString(),
         min_t0: r.min_t0,
         time_of_day: new Date(currRun.summary.min_t0).getHours(),
         client: process.env.LOAD_TEST_CLIENT_NAME,
+        file_size_label: process.env.LOAD_TEST_FILE_SIZE_LABEL,
         num_files: r.num_files,
         avg_file_size: r.avg_file_size,
         signed_url_throughput: r.signed_url_throughput,
@@ -277,7 +281,7 @@ export class ImageReporterSigned {
     });
 
     try {
-      const { data: res } = await axios.post(url, data, { headers: { Cookie: process.env.LOAD_TEST_AUTH_COOKIE } });
+      const { data: res } = await axios.post(REPORT_TABLES.SIGNED, data, { headers: { Cookie: process.env.LOAD_TEST_AUTH_COOKIE } });
       console.log('saved the report in the database.');
     } catch (err) {
       console.log('unable to save the report in the database.');
