@@ -4,7 +4,7 @@
 async function checkDerivaPageLoad(page, userContext, events, test) {
 
   await test.step('navbar_load', async () => {
-    await page.goto('https://staging.atlas-d2k.org/chaise/recordset/#2/Gene_Expression:Image@sort(RID)?limit=200');
+    await page.goto('https://dev.derivacloud.org/chaise/recordset/#1/isa:dataset@sort(accession::desc::)?limit=200');
     await page.locator('#mainnav').waitFor({ state: 'visible' });
   })
 
@@ -13,16 +13,16 @@ async function checkDerivaPageLoad(page, userContext, events, test) {
     await page.locator('.recordest-main-spinner').waitFor({ state: 'detached' });
   });
 
-  await test.step('all_images_load', async () => {
-    /**
-     * wait for thumbnails to load
-     * https://github.com/microsoft/playwright/issues/6046
-     */
-    await page.waitForFunction(() => {
-      const images = Array.from(document.querySelectorAll('img'));
-      return images.every(img => img.complete && img.naturalWidth !== 0);
-    });
-  });
+  // await test.step('all_images_load', async () => {
+  //   /**
+  //    * wait for thumbnails to load
+  //    * https://github.com/microsoft/playwright/issues/6046
+  //    */
+  //   await page.waitForFunction(() => {
+  //     const images = Array.from(document.querySelectorAll('img'));
+  //     return images.every(img => img.complete && img.naturalWidth !== 0);
+  //   });
+  // });
 }
 
 module.exports = {

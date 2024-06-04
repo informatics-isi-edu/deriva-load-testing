@@ -1,8 +1,9 @@
 config:
   target: "https://staging.atlas-d2k.org"
   phases:
-    - duration: 1
+    - duration: 60
       arrivalRate: 5
+      maxVusers: 25
   engines:
     playwright: { aggregateByName: true}
   processor: ./scripts.js

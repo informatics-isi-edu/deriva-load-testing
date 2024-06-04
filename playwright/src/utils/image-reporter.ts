@@ -201,9 +201,10 @@ export class ImageReporter {
   }
 
   static async saveInDB(currRun: any) {
+    const sessionID = new Date(currRun.runs[0].min_t0).valueOf();
     const data = currRun.runs.map((r) => {
       return {
-        // min_t0: new Date(r.min_t0).toISOString(),
+        session_id: sessionID,
         min_t0: r.min_t0,
         time_of_day: new Date(currRun.summary.min_t0).getHours(),
         client: process.env.LOAD_TEST_CLIENT_NAME,
