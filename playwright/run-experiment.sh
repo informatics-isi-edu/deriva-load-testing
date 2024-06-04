@@ -6,11 +6,11 @@ export LOAD_TEST_HATRAC_URL_PREFIX="https://staging.atlas-d2k.org/hatrac/resourc
 export LOAD_TEST_HATRAC_REDIRECT_URL_PREFIX="https://vm012.hive.psc.edu:9000/atlas-d2k"
 
 URLs=(
-  # "32K:https://staging.atlas-d2k.org/chaise/recordset/#2/Gene_Expression:Image/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFMDWOAnnCEjmNgBYC0ARigB4gA0p5Vc8IAKpWgLa0IYAJYAbagGYATAGkQAXQC+yoA@sort(RID)"
-  # "64K:https://staging.atlas-d2k.org/chaise/recordset/#2/Gene_Expression:Image/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFMDWOAnnCEjmNgBYC0ARigB4gA0p5Vc8IAKpWgLa0IYAJYAbagDYALAGkQAXQC+yoA@sort(RID)"
-  # "128K:https://staging.atlas-d2k.org/chaise/recordset/#2/Gene_Expression:Image/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFMDWOAnnCEjmNgBYC0ARigB4gA0p5Vc8IAKpWgLa0IYAJYAbagEYATAA4A0iAC6AX1VA@sort(RID)"
+  "32K:https://staging.atlas-d2k.org/chaise/recordset/#2/Gene_Expression:Image/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFMDWOAnnCEjmNgBYC0ARigB4gA0p5Vc8IAKpWgLa0IYAJYAbagGYATAGkQAXQC+yoA@sort(RID)"
+  "64K:https://staging.atlas-d2k.org/chaise/recordset/#2/Gene_Expression:Image/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFMDWOAnnCEjmNgBYC0ARigB4gA0p5Vc8IAKpWgLa0IYAJYAbagDYALAGkQAXQC+yoA@sort(RID)"
+  "128K:https://staging.atlas-d2k.org/chaise/recordset/#2/Gene_Expression:Image/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFMDWOAnnCEjmNgBYC0ARigB4gA0p5Vc8IAKpWgLa0IYAJYAbagEYATAA4A0iAC6AX1VA@sort(RID)"
   "256K:https://staging.atlas-d2k.org/chaise/recordset/#2/Gene_Expression:Image/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFMDWOAnnCEjmNgBYC0ARigB4gA0p5Vc8IAKpWgLa0IYAJYAbagCYArADYA0iAC6AX1VA@sort(RID)"
-  # "512K:https://staging.atlas-d2k.org/chaise/recordset/#2/Gene_Expression:Image/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFMDWOAnnCEjmNgBYC0ARigB4gA0p5Vc8IAKpWgLa0IYAJYAbagFYAjACYA0iAC6AX1VA@sort(RID)"
+  "512K:https://staging.atlas-d2k.org/chaise/recordset/#2/Gene_Expression:Image/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFMDWOAnnCEjmNgBYC0ARigB4gA0p5Vc8IAKpWgLa0IYAJYAbagFYAjACYA0iAC6AX1VA@sort(RID)"
 )
 
 PAGE_SIZES=(
@@ -27,7 +27,7 @@ RUN_COUNT=1
 # set this to 0 if you don't want to do any reloads.
 export LOAD_TEST_RELOAD_COUNT=10
 
-export LOAD_TEST_SIGNED=true
+export LOAD_TEST_SIGNED=false
 
 echo "Running experiment with signed: $LOAD_TEST_SIGNED"
 
