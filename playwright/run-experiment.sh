@@ -27,7 +27,7 @@ RUN_COUNT=1
 # set this to 0 if you don't want to do any reloads.
 export LOAD_TEST_RELOAD_COUNT=10
 
-export LOAD_TEST_SIGNED=false
+export LOAD_TEST_SIGNED=true
 
 echo "Running experiment with signed: $LOAD_TEST_SIGNED"
 
