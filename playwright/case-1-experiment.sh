@@ -1,5 +1,7 @@
 #!/bin/bash
-# NOTE don't forget to define LOAD_TEST_CLIENT_NAME and LOAD_TEST_AUTH_COOKIE before running this script
+# $1: (boolean) whether this is for a signed experiment or unsigned
+
+# NOTE don't forget to define LOAD_TEST_CLIENT_NAME, LOAD_TEST_AUTH_COOKIE
 
 export LOAD_TEST_ERMREST_MAIN_URL_PREFIX="https://staging.atlas-d2k.org/ermrest/catalog/2/attributegroup/M:=Gene_Expression:Image/*::ciregexp::Thumbnail"
 export LOAD_TEST_HATRAC_URL_PREFIX="https://staging.atlas-d2k.org/hatrac/resources/gene_expression"
@@ -14,10 +16,7 @@ URLs=(
 )
 
 PAGE_SIZES=(
-  # 25
-  # 50
   100
-  # 200
 )
 
 # how many times we should call the test script. useful when we want to compare reload vs. starting from scratch
@@ -27,9 +26,7 @@ RUN_COUNT=1
 # set this to 0 if you don't want to do any reloads.
 export LOAD_TEST_RELOAD_COUNT=10
 
-export LOAD_TEST_SIGNED=false
-
-echo "Running experiment with signed: $LOAD_TEST_SIGNED"
+echo "case-1-experiment.sh with signed: $1"
 
 for ((n=0;n<RUN_COUNT;n++)); do
   for URL in "${URLs[@]}"; do
