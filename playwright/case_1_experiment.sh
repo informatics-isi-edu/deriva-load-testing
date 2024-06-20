@@ -39,7 +39,7 @@ node --version
 #       export LOAD_TEST_CHAISE_URL="$CHAISE_URL"
 #       export LOAD_TEST_PAGE_SIZE="$PAGE_SIZE"
 #       echo "file size label: $LOAD_TEST_FILE_SIZE_LABEL"
-#       time npx playwright test image.spec.ts --workers 1
+#       time npx playwright test --workers 1 --config case1.config.ts
 #     done
 #   done
 # done

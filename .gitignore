@@ -6,6 +6,6 @@
 /playwright/test-report-summary.md
 /playwright/test-report-signed.json
 /playwright/test-report-unsigned.json
-/playwright/test.har
+/playwright/*.har
 /playwright/har-files/
 /playwright/.env

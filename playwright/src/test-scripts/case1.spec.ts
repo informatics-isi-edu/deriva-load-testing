@@ -1,6 +1,6 @@
 /**
  *
- * go to recordset page, wait for images to load, reload the page multiple times.
+ * go to recordset page for image, wait for images to load, reload the page multiple times.
  *
  */
 import { test } from '@playwright/test';

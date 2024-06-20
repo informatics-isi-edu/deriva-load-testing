@@ -2,6 +2,8 @@
 
 This folder contains several test scenarios that we can run to evaluate the performance of chaise pages.
 
+> :warning: The content in this file are not representing the latest changes. I'll update it once everything is stable.
+
 ## Prerequisites
 If you're running this on a fresh Ubuntu installation, you first need to install `make` and `nodejs`. The following is how I would do it:
 

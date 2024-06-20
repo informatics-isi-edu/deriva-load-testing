@@ -3,11 +3,11 @@ config:
   phases:
     - duration: 60
       arrivalRate: 5
-      maxVusers: 25
+      maxVusers: 50
   engines:
     playwright: { aggregateByName: true}
-  processor: ./scripts.js
+  processor: ./../playwright/src/utils/test-page-load.js
 scenarios:
-  - name: "check_deriva_page_load"
+  - name: "test_recordset_page_load"
     engine: playwright
-    flowFunction: "checkDerivaPageLoad"
+    flowFunction: "testChaisePageLoad"

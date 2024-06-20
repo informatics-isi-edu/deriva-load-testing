@@ -1,5 +1,4 @@
 import { defineConfig, devices } from '@playwright/test';
-import path from 'path';
 import dotenv from 'dotenv';
 
 // Read from default ".env" file.
@@ -18,6 +17,8 @@ console.log(`client name: ${clientName}\nauth cookie: ${cookie}`);
 export default defineConfig({
   testDir: './src/test-scripts',
 
+  testMatch: 'case2.spec.ts',
+
   fullyParallel: true,
 
   timeout: 10 * 60 * 1000,
@@ -25,9 +26,6 @@ export default defineConfig({
   retries: 0,
 
   reporter: [['list', { printSteps: true }]],
-
-  globalSetup: require.resolve('./src/utils/image.setup'),
-  globalTeardown: require.resolve('./src/utils/image.teardown'),
 
   use: {
     ignoreHTTPSErrors: true,
@@ -41,20 +39,12 @@ export default defineConfig({
         ignoreHTTPSErrors: true,
         contextOptions: {
           recordHar: {
-            path: './test.har',
+            path: './case2-test.har',
             // without the following the HAR file would be too large and in some cases would throw "RangeError: Invalid string length"
             content: 'omit'
           }
         }
       },
     },
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
   ]
 });
