@@ -4,7 +4,7 @@ const REPORT_TABLES = {
   CHAISE_PERFORMANCE: 'https://dev.derivacloud.org/ermrest/catalog/83773/entity/load-testing:chaise_performance_experiment'
 };
 
-const SERVER_LOCATION = 'https://staging.atlas-d2k.org/';
+const SERVER_LOCATION = 'https://staging.atlas-d2k.org';
 
 const CHAISE_PERFORMANCE_URLS = [
   {

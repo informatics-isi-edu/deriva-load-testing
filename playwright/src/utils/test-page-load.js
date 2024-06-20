@@ -1,6 +1,6 @@
 const {
   pickARandomChaisePerformanceURL, SERVER_LOCATION,
-  waitForRecordsetMainData, waitForRecordsetSecondaryData,
+  waitForNavbar, waitForRecordsetMainData, waitForRecordsetSecondaryData,
   waitForRecordMainData, waitForRecordSecondaryData
 } = require("./helpers");
 
@@ -13,7 +13,9 @@ async function testChaisePageLoad(page, userContext, events, test) {
   let urlProps = pickARandomChaisePerformanceURL(seed);
 
   await test.step('navbar_load', async () => {
-    await page.goto(SERVER_LOCATION + urlProps.url);
+    const url = SERVER_LOCATION + urlProps.url;
+    // console.log(url)
+    await page.goto(url);
     await waitForNavbar(page);
   });
 
