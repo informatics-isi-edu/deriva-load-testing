@@ -90,12 +90,12 @@ test.afterAll(async () => {
 
   console.log(data);
 
-  // try {
-  //   const { data: res } = await axios.post(REPORT_TABLES.CHAISE_PERFORMANCE, data, { headers: { Cookie: process.env.LOAD_TEST_AUTH_COOKIE } });
-  //   console.log('saved the report in the database.');
-  // } catch (err) {
-  //   console.log('unable to save the report in the database.');
-  //   console.log(err);
-  // }
+  try {
+    const { data: res } = await axios.post(REPORT_TABLES.CHAISE_PERFORMANCE, data, { headers: { Cookie: process.env.LOAD_TEST_AUTH_COOKIE } });
+    console.log('saved the report in the database.');
+  } catch (err) {
+    console.log('unable to save the report in the database.');
+    console.log(err);
+  }
 
 });
