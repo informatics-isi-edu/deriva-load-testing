@@ -32,7 +32,7 @@ test('open chaise pages', async ({ page, browser, browserName }) => {
   test.setTimeout((urls.length * 2) * 60 * 1000);
 
   // disable cache
-  page.route('**', route => route.continue());
+  // page.route('**', route => route.continue());
 
   for await (const [i, urlProps] of urls.entries()) {
     let report : any = {}, startTime : number;
@@ -85,21 +85,18 @@ test.afterAll(async () => {
       page_identifier: r['page_identifier'],
       navbar_load: r['navbar_load'],
       main_data_load: r['main_data_load'],
-      full_page_load: r['full_page_load'],
-      // TODO
-      // num_server_cached_images: 0,
-      // num_browser_cached_images: 0
+      full_page_load: r['full_page_load']
     }
   });
 
   console.log(data);
 
-  // try {
-  //   const { data: res } = await axios.post(REPORT_TABLES.CHAISE_PERFORMANCE, data, { headers: { Cookie: process.env.LOAD_TEST_AUTH_COOKIE } });
-  //   console.log('saved the report in the database.');
-  // } catch (err) {
-  //   console.log('unable to save the report in the database.');
-  //   console.log(err);
-  // }
+  try {
+    const { data: res } = await axios.post(REPORT_TABLES.CHAISE_PERFORMANCE, data, { headers: { Cookie: process.env.LOAD_TEST_AUTH_COOKIE } });
+    console.log('saved the report in the database.');
+  } catch (err) {
+    console.log('unable to save the report in the database.');
+    console.log(err);
+  }
 
 });

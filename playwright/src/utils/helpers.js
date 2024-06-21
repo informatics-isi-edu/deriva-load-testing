@@ -1,7 +1,7 @@
 const REPORT_TABLES = {
-  SIGNED: 'https://dev.derivacloud.org/ermrest/catalog/83773/entity/load-testing:signed_url_experiment',
-  UNSIGNED: 'https://dev.derivacloud.org/ermrest/catalog/83773/entity/load-testing:unsigned_url_experiment',
-  CHAISE_PERFORMANCE: 'https://dev.derivacloud.org/ermrest/catalog/83773/entity/load-testing:chaise_performance_experiment'
+  SIGNED: 'https://dev.derivacloud.org/ermrest/catalog/cloud_testing/entity/load-testing:signed_url_experiment',
+  UNSIGNED: 'https://dev.derivacloud.org/ermrest/catalog/cloud_testing/entity/load-testing:unsigned_url_experiment',
+  CHAISE_PERFORMANCE: 'https://dev.derivacloud.org/ermrest/catalog/cloud_testing/entity/load-testing:chaise_performance_experiment'
 };
 
 const SERVER_LOCATION = 'https://staging.atlas-d2k.org';
@@ -55,7 +55,7 @@ const CHAISE_PERFORMANCE_URLS = [
     identifier: 'RNASeq:Experiment/RID=14-4KPM'
   },
   // {
-  //   url: '/chaise/record/#2/RNASeq:Study/RID=17-HW4W', // TODO has issues
+  //   url: '/chaise/record/#2/RNASeq:Study/RID=17-HW4W',
   //   app: 'record',
   //   identifier: 'RNASeq:Study/RID=17-HW4W'
   // },
@@ -104,12 +104,12 @@ const CHAISE_PERFORMANCE_URLS = [
     identifier: 'Common:Collection/RID=17-E76T'
   },
   // {
-  //   url: '/chaise/record/#2/Gene_Expression:Specimen/RID=17-HVEW', // TODO has issues
+  //   url: '/chaise/record/#2/Gene_Expression:Specimen/RID=17-HVEW',
   //   app: 'record',
   //   identifier: 'Gene_Expression:Specimen/RID=17-HVEW'
   // },
   // {
-  //   url: '/chaise/record/#2/RNASeq:Study/RID=17-HC9Y', // TODO has issues
+  //   url: '/chaise/record/#2/RNASeq:Study/RID=17-HC9Y',
   //   app: 'record',
   //   identifier: 'RNASeq:Study/RID=17-HC9Y'
   // },
@@ -131,6 +131,109 @@ const CHAISE_PERFORMANCE_URLS = [
   }
 ]
 
+
+const CHAISE_PERFORMANCE_URLS_DUMMY = [
+  {
+    url: '/chaise/recordset/#2/Common:Gene/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM4gEEIBPAfQBEwAXMEAGhCwAsUBLXJOeKjNHAXQC+QoA@sort(RID)',
+    app: 'recordset',
+    identifier: 'Common:Gene/Any_Data=true'
+  },
+  {
+    url: '/chaise/recordset/#2/Gene_Expression:Specimen',
+    app: 'recordset',
+    identifier: 'Gene_Expression:Specimen'
+  },
+  {
+    url: '/chaise/record/#2/RNASeq:Study/RID=W-RAHW',
+    app: 'record',
+    identifier: 'RNASeq:Study/RID=W-RAHW'
+  },
+  {
+    url: '/chaise/record/#2/RNASeq:Experiment/RID=14-4KPM',
+    app: 'record',
+    identifier: 'RNASeq:Experiment/RID=14-4KPM'
+  },
+  {
+    url: '/chaise/recordset/#2/Common:Gene/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM4gEEIBPAfQBEwAXMEAGhCwAsUBLXJOeKjNHAXQC+QoA@sort(RID)',
+    app: 'recordset',
+    identifier: 'Common:Gene/Any_Data=true'
+  },
+  {
+    url: '/chaise/recordset/#2/Gene_Expression:Specimen',
+    app: 'recordset',
+    identifier: 'Gene_Expression:Specimen'
+  },
+  {
+    url: '/chaise/record/#2/RNASeq:Study/RID=W-RAHW',
+    app: 'record',
+    identifier: 'RNASeq:Study/RID=W-RAHW'
+  },
+  {
+    url: '/chaise/record/#2/RNASeq:Experiment/RID=14-4KPM',
+    app: 'record',
+    identifier: 'RNASeq:Experiment/RID=14-4KPM'
+  },
+  {
+    url: '/chaise/recordset/#2/Common:Gene/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM4gEEIBPAfQBEwAXMEAGhCwAsUBLXJOeKjNHAXQC+QoA@sort(RID)',
+    app: 'recordset',
+    identifier: 'Common:Gene/Any_Data=true'
+  },
+  {
+    url: '/chaise/recordset/#2/Gene_Expression:Specimen',
+    app: 'recordset',
+    identifier: 'Gene_Expression:Specimen'
+  },
+  {
+    url: '/chaise/record/#2/RNASeq:Study/RID=W-RAHW',
+    app: 'record',
+    identifier: 'RNASeq:Study/RID=W-RAHW'
+  },
+  {
+    url: '/chaise/record/#2/RNASeq:Experiment/RID=14-4KPM',
+    app: 'record',
+    identifier: 'RNASeq:Experiment/RID=14-4KPM'
+  },
+  {
+    url: '/chaise/recordset/#2/Common:Gene/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM4gEEIBPAfQBEwAXMEAGhCwAsUBLXJOeKjNHAXQC+QoA@sort(RID)',
+    app: 'recordset',
+    identifier: 'Common:Gene/Any_Data=true'
+  },
+  {
+    url: '/chaise/recordset/#2/Gene_Expression:Specimen',
+    app: 'recordset',
+    identifier: 'Gene_Expression:Specimen'
+  },
+  {
+    url: '/chaise/record/#2/RNASeq:Study/RID=W-RAHW',
+    app: 'record',
+    identifier: 'RNASeq:Study/RID=W-RAHW'
+  },
+  {
+    url: '/chaise/record/#2/RNASeq:Experiment/RID=14-4KPM',
+    app: 'record',
+    identifier: 'RNASeq:Experiment/RID=14-4KPM'
+  },
+  {
+    url: '/chaise/recordset/#2/Common:Gene/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM4gEEIBPAfQBEwAXMEAGhCwAsUBLXJOeKjNHAXQC+QoA@sort(RID)',
+    app: 'recordset',
+    identifier: 'Common:Gene/Any_Data=true'
+  },
+  {
+    url: '/chaise/recordset/#2/Gene_Expression:Specimen',
+    app: 'recordset',
+    identifier: 'Gene_Expression:Specimen'
+  },
+  {
+    url: '/chaise/record/#2/RNASeq:Study/RID=W-RAHW',
+    app: 'record',
+    identifier: 'RNASeq:Study/RID=W-RAHW'
+  },
+  {
+    url: '/chaise/record/#2/RNASeq:Experiment/RID=14-4KPM',
+    app: 'record',
+    identifier: 'RNASeq:Experiment/RID=14-4KPM'
+  },
+]
 
 /**
  * given a seed, will return a pseudp-random integer from 0 to inclusive max.
@@ -179,7 +282,7 @@ const pickARandomChaisePerformanceURL = (seed) => {
 }
 
 const shuffleChaisePerformanceURLs = (seed) => {
-  let res = [...CHAISE_PERFORMANCE_URLS];
+  let res = [...CHAISE_PERFORMANCE_URLS_DUMMY];
   let m = res.length, t, i;
 
   while (m) {
