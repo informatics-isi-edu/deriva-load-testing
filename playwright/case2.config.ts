@@ -19,6 +19,8 @@ export default defineConfig({
 
   testMatch: 'case2.spec.ts',
 
+  globalTeardown: require.resolve('./src/utils/check-cache.teardown'),
+
   fullyParallel: true,
 
   timeout: 10 * 60 * 1000,
@@ -37,13 +39,13 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         ignoreHTTPSErrors: true,
-        // contextOptions: {
-        //   recordHar: {
-        //     path: './case2-test.har',
-        //     // without the following the HAR file would be too large and in some cases would throw "RangeError: Invalid string length"
-        //     content: 'omit'
-        //   }
-        // }
+        contextOptions: {
+          recordHar: {
+            path: './case2-test.har',
+            // without the following the HAR file would be too large and in some cases would throw "RangeError: Invalid string length"
+            content: 'omit'
+          }
+        }
       },
     },
   ]
