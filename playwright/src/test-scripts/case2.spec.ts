@@ -21,24 +21,23 @@ type ReportType = {
 
 const seed = parseInt(process.env.LOAD_TEST_SEED!);
 const urls = shuffleChaisePerformanceURLs(seed);
-const pageSize = 25;
 
 const allReports: ReportType[] = [];
 
-test('open chaise pages', async ({ page, browser, browserName }) => {
+for (const [i, urlProps] of urls.entries()) {
+  test(`${i}: open ${urlProps.app}: ${urlProps.identifier}`, async ({ page, browser, browserName }) => {
 
-  // make sure the timeout is based on the number of urls
-  test.setTimeout((urls.length * 2) * 60 * 1000);
+    // make sure the timeout is based on the number of urls
+    test.setTimeout((urls.length * 2) * 60 * 1000);
 
-  // disable cache
-  // page.route('**', route => route.continue());
+    // disable cache
+    // page.route('**', route => route.continue());
 
-  for await (const [i, urlProps] of urls.entries()) {
-    let report : any = {}, startTime : number;
+    let report: any = {}, startTime: number;
     report['app'] = urlProps.app;
     report['page_identifier'] = urlProps.identifier;
 
-    await test.step(`${urlProps.identifier}: navbar_load`, async () => {
+    await test.step(`navbar_load`, async () => {
       report['min_t0'] = convertDateToLocal(new Date());
       startTime = performance.now();
       await page.goto(SERVER_LOCATION + urlProps.url);
@@ -46,7 +45,7 @@ test('open chaise pages', async ({ page, browser, browserName }) => {
       report['navbar_load'] = interval(startTime, performance.now());
     });
 
-    await test.step(`${urlProps.identifier}: main_data_load`, async () => {
+    await test.step(`main_data_load`, async () => {
       if (urlProps.app === 'recordset') {
         await waitForRecordsetMainData(page);
       } else {
@@ -55,7 +54,7 @@ test('open chaise pages', async ({ page, browser, browserName }) => {
       report['main_data_load'] = interval(startTime, performance.now());
     });
 
-    await test.step(`${urlProps.identifier}: full_page_load`, async () => {
+    await test.step(`full_page_load`, async () => {
       if (urlProps.app === 'recordset') {
         await waitForRecordsetSecondaryData(page);
       } else {
@@ -64,9 +63,8 @@ test('open chaise pages', async ({ page, browser, browserName }) => {
       report['full_page_load'] = interval(startTime, performance.now());
       allReports.push(report);
     });
-  }
-
-});
+  });
+}
 
 test.afterAll(async () => {
   // save allReports in the db
