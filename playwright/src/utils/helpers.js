@@ -436,7 +436,7 @@ const shuffleChaisePerformanceURLs = (seed, count) => {
   if (Number.isInteger(count)) {
     maxCount = count;
   }
-  return res.slice(0,maxCount);
+  return res.slice(0, maxCount);
 }
 
 /********************** wait and locator functions ************************/

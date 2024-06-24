@@ -25,6 +25,7 @@ for (let runNumber = 1; runNumber <= numRuns; runNumber++) {
 
       let report: any = {}, startTime: number, hasError : boolean;
       report = { ...urlProps };
+      report['page_order'] = pageOrder;
       report['run_number'] = runNumber;
 
       await test.step(`navbar_load`, async () => {
@@ -70,13 +71,16 @@ for (let runNumber = 1; runNumber <= numRuns; runNumber++) {
             await waitForRecordSecondaryData(page);
           }
           report['full_page_load'] = interval(startTime, performance.now());
-          allReports.push(report);
         } catch (exp) {
           console.log('error while waiting for full page load');
           console.error(exp);
           report['full_page_load'] = -1;
         }
       });
+
+      await test.step('add report', async () => {
+        allReports.push(report);
+      })
     });
   }
 }
@@ -92,7 +96,7 @@ test.afterAll(async () => {
       use_case: process.env.LOAD_TEST_USE_CASE_LABEL,
       num_bg_users: process.env.LOAD_TEST_NUM_BG_USERS,
       seed: seed,
-      page_order: i + 1,
+      page_order: r['page_order'],
       page_id: r['identifier'],
       app: r['app'],
       schema_table: r['schema_table'],
@@ -103,7 +107,7 @@ test.afterAll(async () => {
     }
   });
 
-  const saveToDB = process.env.LOAD_TEST_SKIP_REPORT_SAVE !== 'true';
+  const saveToDB = process.env.LOAD_TEST_SKIP_REPORT_SAVE != 'true';
   if (saveToDB) {
     try {
       await axios.post(REPORT_TABLES.CHAISE_PERFORMANCE, data, { headers: { Cookie: process.env.LOAD_TEST_AUTH_COOKIE } });
