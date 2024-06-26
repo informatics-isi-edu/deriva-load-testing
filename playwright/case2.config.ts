@@ -11,13 +11,19 @@ if (!clientName || !cookie) {
 }
 console.log(`client name: ${clientName}\nauth cookie: ${cookie}`);
 
-const requiredVariables = {
+const saveToDB = process.env.LOAD_TEST_SKIP_REPORT_SAVE != 'true';
+
+const requiredVariables = saveToDB ? {
   'batch_id': 'LOAD_TEST_BATCH_ID',
   'number of runs': 'LOAD_TEST_NUM_RUNS',
   'seed': 'LOAD_TEST_SEED',
   'page size': 'LOAD_TEST_PAGE_SIZE',
   'use_case': 'LOAD_TEST_USE_CASE_LABEL',
   'number of background users': 'LOAD_TEST_NUM_BG_USERS'
+} : {
+  'number of runs': 'LOAD_TEST_NUM_RUNS',
+  'seed': 'LOAD_TEST_SEED',
+  'page size': 'LOAD_TEST_PAGE_SIZE',
 };
 
 for (const k in requiredVariables) {

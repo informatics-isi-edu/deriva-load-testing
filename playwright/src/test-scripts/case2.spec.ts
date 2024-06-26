@@ -10,8 +10,10 @@ import {
 type ReportType = {
   app: string, page_identifier: string, min_t0: any, run_number: number,
   navbar_load: number, main_data_load: number, full_page_load: number,
+  navbar_load_chaise_manual: number, main_data_load_chaise_manual: number, full_page_load_chaise_manual: number,
 };
 
+const saveToDB = process.env.LOAD_TEST_SKIP_REPORT_SAVE != 'true';
 const numRuns = parseInt(process.env.LOAD_TEST_NUM_RUNS!);
 const seed = parseInt(process.env.LOAD_TEST_SEED!);
 const urls = shuffleChaisePerformanceURLs(seed, parseInt(process.env.LOAD_TEST_PAGE_SIZE!));
@@ -23,10 +25,27 @@ for (let runNumber = 1; runNumber <= numRuns; runNumber++) {
     test(`${runNumber}, ${pageOrder + 1}: open ${urlProps.app}, ${urlProps.identifier}`, async ({ page }) => {
       test.setTimeout(60 * 1000);
 
-      let report: any = {}, startTime: number, hasError : boolean;
+      let report: any = {}, startTime: number, hasError: boolean;
       report = { ...urlProps };
       report['page_order'] = pageOrder;
       report['run_number'] = runNumber;
+
+      if (saveToDB) {
+        page.on('console', msg => {
+          if (msg.type() === 'log') {
+            const text = msg.text();
+            if (text.startsWith('navbar_load_chaise_manual')) {
+              report['navbar_load_chaise_manual'] = parseFloat(text.slice(27));
+            }
+            if (text.startsWith('main_data_load_chaise_manual')) {
+              report['main_data_load_chaise_manual'] = parseFloat(text.slice(30));
+            }
+            if (text.startsWith('full_page_load_chaise_manual')) {
+              report['full_page_load_chaise_manual'] = parseFloat(text.slice(30));
+            }
+          }
+        });
+      }
 
       await test.step(`navbar_load`, async () => {
         report['min_t0'] = convertDateToLocal(new Date());
@@ -78,14 +97,18 @@ for (let runNumber = 1; runNumber <= numRuns; runNumber++) {
         }
       });
 
-      await test.step('add report', async () => {
-        allReports.push(report);
-      })
+      if (saveToDB) {
+        await test.step('add report', async () => {
+          allReports.push(report);
+        });
+      }
     });
   }
 }
 
 test.afterAll(async () => {
+  if (!saveToDB) return;
+
   const data = allReports.map((r, i) => {
     return {
       batch_id: process.env.LOAD_TEST_BATCH_ID,
@@ -103,21 +126,20 @@ test.afterAll(async () => {
       filter: r['filter'],
       navbar_load: r['navbar_load'],
       main_data_load: r['main_data_load'],
-      full_page_load: r['full_page_load']
+      full_page_load: r['full_page_load'],
+      navbar_load_chaise_manual: r['navbar_load_chaise_manual'],
+      main_data_load_chaise_manual: r['main_data_load_chaise_manual'],
+      full_page_load_chaise_manual: r['full_page_load_chaise_manual']
     }
   });
 
-  const saveToDB = process.env.LOAD_TEST_SKIP_REPORT_SAVE != 'true';
-  if (saveToDB) {
-    try {
-      await axios.post(REPORT_TABLES.CHAISE_PERFORMANCE, data, { headers: { Cookie: process.env.LOAD_TEST_AUTH_COOKIE } });
-      console.log('saved the report in the database.');
-    } catch (err) {
-      console.log('unable to save the report in the database.');
-      console.log(err);
-    }
-  } else {
-    console.log(data);
-  }
+  // console.log(data);
 
+  try {
+    await axios.post(REPORT_TABLES.CHAISE_PERFORMANCE, data, { headers: { Cookie: process.env.LOAD_TEST_AUTH_COOKIE } });
+    console.log('saved the report in the database.');
+  } catch (err) {
+    console.log('unable to save the report in the database.');
+    console.log(err);
+  }
 });

@@ -4,7 +4,7 @@ const REPORT_TABLES = {
   CHAISE_PERFORMANCE: 'https://dev.derivacloud.org/ermrest/catalog/cloud_testing/entity/load-testing:chaise_performance_experiment'
 };
 
-const SERVER_LOCATION = 'https://staging.atlas-d2k.org/chaise/';
+const SERVER_LOCATION = 'https://staging.atlas-d2k.org/~ashafaei/chaise-load-testing/';
 
 const CHAISE_PERFORMANCE_URLS = [
   {
@@ -15,17 +15,17 @@ const CHAISE_PERFORMANCE_URLS = [
     filter: 'Any_Data=true'
   },
   {
-    url: '/recordset/#2/Cell_Line:Reporter_Cell_Line',
-    app: 'recordset',
-    identifier: 'Cell_Line:Reporter_Cell_Line',
-    schema_table: 'Cell_Line:Reporter_Cell_Line',
-    filter: ''
-  },
-  {
     url: '/recordset/#2/Gene_Expression:Specimen',
     app: 'recordset',
     identifier: 'Gene_Expression:Specimen',
     schema_table: 'Gene_Expression:Specimen',
+    filter: ''
+  },
+  {
+    url: '/recordset/#2/Cell_Line:Reporter_Cell_Line',
+    app: 'recordset',
+    identifier: 'Cell_Line:Reporter_Cell_Line',
+    schema_table: 'Cell_Line:Reporter_Cell_Line',
     filter: ''
   },
   {
@@ -35,6 +35,13 @@ const CHAISE_PERFORMANCE_URLS = [
     identifier: 'RNASeq:Study/has-single-cell-viz',
     schema_table: 'RNASeq:Study',
     filter: 'has-single-cell-viz'
+  },
+  {
+    url: '/recordset/#2/Common:Collection',
+    app: 'recordset',
+    identifier: 'Common:Collection',
+    schema_table: 'Common:Collection',
+    filter: ''
   },
   {
     url: '/recordset/#2/Protocol:Protocol',
@@ -51,13 +58,6 @@ const CHAISE_PERFORMANCE_URLS = [
     filter: 'RID=W-RAHW'
   },
   {
-    url: '/recordset/#2/Common:Collection',
-    app: 'recordset',
-    identifier: 'Common:Collection',
-    schema_table: 'Common:Collection',
-    filter: ''
-  },
-  {
     url: '/recordset/#2/Gene_Expression:Specimen/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM6JHQBcAjdafEAcRwhwH0BRADwAcMckkBLFCEADQgAyqxxZuAW1r0AglzABPegBVFY+gDMA1jkUgAugF8hAJQCSAEUNCsACxTdcSSgEYAbAFoATJYBipoZGxkA',
     // url: '[{"type":"set", "s_t":"Gene_Expression:Specimen", "filters":{"and":[{"src":[{"o":["Gene_Expression", "Specimen_Assay_Type_fkey"]}, "RID"], "ch":["16-2DFR"]}]}}]',
     app: 'recordset',
@@ -72,13 +72,6 @@ const CHAISE_PERFORMANCE_URLS = [
     schema_table: 'RNASeq:Experiment',
     filter: 'Assay_Type=ISH'
   },
-  // {
-  //   url: '/record/#2/RNASeq:Study/RID=17-HW4W', // missing from staging
-  //   app: 'record',
-  //   identifier: 'RNASeq:Study/RID=17-HW4W',
-  //   schema_table: 'RNASeq:Study/RID=17-HW4W',
-  //   filter: 'RID=17-HW4W'
-  // },
   {
     url: '/recordset/#2/RNASeq:Study/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM6JAEsIAjdafEAJQDkBBAZRwEcQAaEAUQA8AHHDIQC2OCABcA+gzFooATwlUAkgBEJAMwDWOOSAC6AXzah0YsmgoJq9Jqw49+gkeIkOBw0ZIAqc-hu26hhzKKvocWAAWKIS4SJQAigC0AJoAUskATOwgAIwAbInxANI0XvoGhkA',
     // url: '[{"type":"set", "s_t":"RNASeq:Study", "filters":{"and":[{"src":[{"i":["RNASeq", "Experiment_Study_RID_fkey"]}, {"o":["RNASeq", "Experiment_Experiment_Type_fkey"]}, "RID"], "ch":["16-QKNT", "Q-YJY2"]}]}}]',
@@ -87,7 +80,20 @@ const CHAISE_PERFORMANCE_URLS = [
     schema_table: 'RNASeq:Study',
     filter: 'Experiment_Type=snRNA-Seq,scRNA-Seq'
   },
-
+  // {
+  //   url: '/record/#2/RNASeq:Study/RID=17-HW4W', // missing from staging
+  //   app: 'record',
+  //   identifier: 'RNASeq:Study/RID=17-HW4W',
+  //   schema_table: 'RNASeq:Study/RID=17-HW4W',
+  //   filter: 'RID=17-HW4W'
+  // },
+  {
+    url: '/recordset/#2/Cell_Line:Parental_Cell_Line',
+    app: 'recordset',
+    identifier: 'Cell_Line:Parental_Cell_Line',
+    schema_table: 'Cell_Line:Parental_Cell_Line',
+    filter: ''
+  },
   {
     url: '/record/#2/Cell_Line:Parental_Cell_Line/RID=Q-2D6W',
     app: 'record',
@@ -96,10 +102,10 @@ const CHAISE_PERFORMANCE_URLS = [
     filter: 'RID=Q-2D6W'
   },
   {
-    url: '/recordset/#2/Cell_Line:Parental_Cell_Line',
+    url: '/recordset/#2/RNASeq:Study',
     app: 'recordset',
-    identifier: 'Cell_Line:Parental_Cell_Line',
-    schema_table: 'Cell_Line:Parental_Cell_Line',
+    identifier: 'RNASeq:Study',
+    schema_table: 'RNASeq:Study',
     filter: ''
   },
   {
@@ -111,13 +117,6 @@ const CHAISE_PERFORMANCE_URLS = [
     filter: 'PI=xue-sean-li'
   },
   {
-    url: '/recordset/#2/Vocabulary:Anatomy',
-    app: 'recordset',
-    identifier: 'Vocabulary:Anatomy',
-    schema_table: 'Vocabulary:Anatomy',
-    filter: ''
-  },
-  {
     url: '/recordset/#2/RNASeq:Study/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM6JAEsIAjdafEAJQDkBBAZRwEcQAaEAUQA8AHHDIQC2OCABcA+gzFooATwlUAkgBEJAMwDWOOSAC6AXzah0YsmgoJq9Jqw49+gkeIkOBw0ZIAqc-hu26hhzKKvocWAAWKIS4SJQAigC0AJoAUgAaAOr6BoZAA',
     // url: '[{"type":"set", "s_t":"RNASeq:Study", "filters":{"and":[{"src":[{"i":["RNASeq", "Experiment_Study_RID_fkey"]}, {"o":["RNASeq", "Experiment_Experiment_Type_fkey"]}, "RID"], "ch":["Q-YJXW"]}]}}]',
     app: 'recordset',
@@ -126,38 +125,17 @@ const CHAISE_PERFORMANCE_URLS = [
     filter: 'Experiment_Type=mRNA-Seq'
   },
   {
-    url: '/recordset/#2/RNASeq:Study',
-    app: 'recordset',
-    identifier: 'RNASeq:Study',
-    schema_table: 'RNASeq:Study',
-    filter: ''
-  },
-  {
     url: '/record/#2/Common:Collection/RID=17-E76T',
     app: 'record',
     identifier: 'Common:Collection/RID=17-E76T',
     schema_table: 'Common:Collection',
     filter: 'RID=17-E76T'
   },
-  // {
-  //   url: '/record/#2/Gene_Expression:Specimen/RID=17-HVEW', // missing from staging
-  //   app: 'record',
-  //   identifier: 'Gene_Expression:Specimen/RID=17-HVEW',
-  //   schema_table: 'Gene_Expression:Specimen',
-  //   filter: 'RID=17-HVEW'
-  // },
   {
-    url: '/record/#2/RNASeq:Study/RID=17-HC9Y', // was not released on staging, so we manually changed it
-    app: 'record',
-    identifier: 'RNASeq:Study/RID=17-HC9Y',
-    schema_table: 'RNASeq:Study',
-    filter: 'RID=17-HC9Y'
-  },
-  {
-    url: '/recordset/#2/Antibody:Antibody_Tests',
+    url: '/recordset/#2/Vocabulary:Anatomy',
     app: 'recordset',
-    identifier: 'Antibody:Antibody_Tests',
-    schema_table: 'Antibody:Antibody_Tests',
+    identifier: 'Vocabulary:Anatomy',
+    schema_table: 'Vocabulary:Anatomy',
     filter: ''
   },
   {
@@ -168,19 +146,40 @@ const CHAISE_PERFORMANCE_URLS = [
     filter: 'RID=W-R812'
   },
   {
+    url: '/record/#2/RNASeq:Study/RID=17-HC9Y', // was not released on staging, so we manually changed it
+    app: 'record',
+    identifier: 'RNASeq:Study/RID=17-HC9Y',
+    schema_table: 'RNASeq:Study',
+    filter: 'RID=17-HC9Y'
+  },
+  {
+    url: '/recordset/#2/Common:Protein',
+    app: 'recordset',
+    identifier: 'Common:Protein',
+    schema_table: 'Common:Protein',
+    filter: ''
+  },
+  // {
+  //   url: '/record/#2/Gene_Expression:Specimen/RID=17-HVEW', // missing from staging
+  //   app: 'record',
+  //   identifier: 'Gene_Expression:Specimen/RID=17-HVEW',
+  //   schema_table: 'Gene_Expression:Specimen',
+  //   filter: 'RID=17-HVEW'
+  // },
+  {
+    url: '/recordset/#2/Antibody:Antibody_Tests',
+    app: 'recordset',
+    identifier: 'Antibody:Antibody_Tests',
+    schema_table: 'Antibody:Antibody_Tests',
+    filter: ''
+  },
+  {
     url: '/recordset/#2/Gene_Expression:Specimen/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM6JHQBcAjdafEAcRwhwH0BRADwAcMckkBLFCEADQgAyqxxZuAW1r0AglzABPegBVFY+gDMA1jkUgAugF8hAOTDTDQrAAsU3XEkoBJABIBhQ0eNA',
     // url: '[{"type":"set", "s_t":"Gene_Expression:Specimen", "filters":{"and":[{"src":[{"o":["Gene_Expression", "Specimen_Assay_Type_fkey"]}, "Name"], "ch":["IHC"]}]}}]',
     app: 'recordset',
     identifier: 'Gene_Expression:Specimen/Assay_Type=IHC',
     schema_table: 'Gene_Expression:Specimen',
     filter: 'Assay_Type=IHC'
-  },
-  {
-    url: '/record/#2/RNASeq:Experiment/RID=14-4KBC',
-    app: 'record',
-    identifier: 'RNASeq:Experiment/RID=14-4KBC',
-    schema_table: 'RNASeq:Experiment',
-    filter: 'RID=14-4KBC'
   },
   {
     url: '/recordset/#2/Gene_Expression:Specimen/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM6JHQBcAjdafEAcRwhwH0BRADwAcMckkBLFCEADQgAyqxxZuAW1r0AglzABPegBVFY+gDMA1jkUgAugF8hAJQCSAEUNCsACxTdcSSgEYAbAFoATJaqzDI2MgA',
@@ -191,13 +190,6 @@ const CHAISE_PERFORMANCE_URLS = [
     filter: 'Assay_Type=Histology'
   },
   {
-    url: '/recordset/#2/Common:Protein',
-    app: 'recordset',
-    identifier: 'Common:Protein',
-    schema_table: 'Common:Protein',
-    filter: ''
-  },
-  {
     url: '/record/#2/Gene_Expression:Image/RID=16-ZHTP',
     app: 'record',
     identifier: 'Gene_Expression:Image/RID=16-ZHTP',
@@ -205,33 +197,11 @@ const CHAISE_PERFORMANCE_URLS = [
     filter: 'RID=16-ZHTP'
   },
   {
-    url: '/record/#2/RNASeq:Experiment/RID=14-4KBE',
+    url: '/record/#2/RNASeq:Experiment/RID=14-4KBC',
     app: 'record',
-    identifier: 'RNASeq:Experiment/RID=14-4KBE',
+    identifier: 'RNASeq:Experiment/RID=14-4KBC',
     schema_table: 'RNASeq:Experiment',
-    filter: 'RID=14-4KBE'
-  },
-  {
-    url: '/recordset/#2/Gene_Expression:Specimen/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM6JHQBcAjdafEAcRwhwH0BRADwAcMckkBLFCEADQgAyqxxZuAW1r1R47p3oAzANY4AniAC6AXyEAlAJIARbUKwALFN1xJKARgAsAWkcBZAGL7te5Omx4CKDEZGgUCNS0DCzsnDx8giJiEtIQ9MY4AG44ADYorKlEYDmyRQDmDKoaPgYmZiCW1rYOAGzOACoAglQADDV+mLj4wWik5DARNHRMbBxcvPxCcikyAAoY3BASrMX0hhDZSETcZWBEKBjKapq6taZa5lY2nJQA6s76ABwAzJ0+ukA',
-    // url: '[{"type":"set", "s_t":"Gene_Expression:Specimen", "filters":{"and":[{"src":[{"o":["Gene_Expression", "Specimen_Species_fkey"]}, "RID"], "ch":["14-4MFR"]}, {"src":[{"o":["Gene_Expression", "Specimen_Developmental_Stage_fkey"]}, "RID"], "ch":["16-TAG0"]}, {"src":[{"o":["Gene_Expression", "Specimen_Principal_Investigator_fkey"]}, "RID"], "ch":["W-R83A"]}]}}]',
-    app: 'recordset',
-    identifier: 'Gene_Expression:Specimen/Species=Homo_Sapiens,Stage=Adult_Human,PI=Douglas_Strand',
-    schema_table: 'Gene_Expression:Specimen',
-    filter: 'Species=Homo_Sapiens,Stage=Adult_Human,PI=Douglas_Strand'
-  },
-  {
-    url: '/record/#2/Common:Collection/RID=W-R8CM',
-    app: 'record',
-    identifier: 'Common:Collection/RID=W-R8CM',
-    schema_table: 'Common:Collection',
-    filter: 'RID=W-R8CM'
-  },
-  {
-    url: '/record/#2/RNASeq:Study/RID=14-4KBA',
-    app: 'record',
-    identifier: 'RNASeq:Study/RID=14-4KBA',
-    schema_table: 'RNASeq:Study',
-    filter: 'RID=14-4KBA'
+    filter: 'RID=14-4KBC'
   },
   {
     url: '/record/#2/Common:Collection/RID=14-4KG6',
@@ -248,11 +218,26 @@ const CHAISE_PERFORMANCE_URLS = [
     filter: 'RID=16-WHYA'
   },
   {
-    url: '/record/#2/Common:Collection/RID=17-E9J6',
+    url: '/record/#2/RNASeq:Experiment/RID=14-4KBE',
     app: 'record',
-    identifier: 'Common:Collection/RID=17-E9J6',
+    identifier: 'RNASeq:Experiment/RID=14-4KBE',
+    schema_table: 'RNASeq:Experiment',
+    filter: 'RID=14-4KBE'
+  },
+  {
+    url: '/record/#2/Common:Collection/RID=W-R8CM',
+    app: 'record',
+    identifier: 'Common:Collection/RID=W-R8CM',
     schema_table: 'Common:Collection',
-    filter: 'RID=17-E9J6'
+    filter: 'RID=W-R8CM'
+  },
+  {
+    url: '/recordset/#2/Gene_Expression:Specimen/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM6JHQBcAjdafEAcRwhwH0BRADwAcMckkBLFCEADQgAyqxxZuAW1r1R47p3oAzANY4AniAC6AXyEAlAJIARbUKwALFN1xJKARgAsAWkcBZAGL7te5Omx4CKDEZGgUCNS0DCzsnDx8giJiEtIQ9MY4AG44ADYorKlEYDmyRQDmDKoaPgYmZiCW1rYOAGzOACoAglQADDV+mLj4wWik5DARNHRMbBxcvPxCcikyAAoY3BASrMX0hhDZSETcZWBEKBjKapq6taZa5lY2nJQA6s76ABwAzJ0+ukA',
+    // url: '[{"type":"set", "s_t":"Gene_Expression:Specimen", "filters":{"and":[{"src":[{"o":["Gene_Expression", "Specimen_Species_fkey"]}, "RID"], "ch":["14-4MFR"]}, {"src":[{"o":["Gene_Expression", "Specimen_Developmental_Stage_fkey"]}, "RID"], "ch":["16-TAG0"]}, {"src":[{"o":["Gene_Expression", "Specimen_Principal_Investigator_fkey"]}, "RID"], "ch":["W-R83A"]}]}}]',
+    app: 'recordset',
+    identifier: 'Gene_Expression:Specimen/Species=Homo_Sapiens,Stage=Adult_Human,PI=Douglas_Strand',
+    schema_table: 'Gene_Expression:Specimen',
+    filter: 'Species=Homo_Sapiens,Stage=Adult_Human,PI=Douglas_Strand'
   },
   {
     url: '/record/#2/RNASeq:Study/RID=17-E9P0',
@@ -262,18 +247,18 @@ const CHAISE_PERFORMANCE_URLS = [
     filter: 'RID=17-E9P0'
   },
   {
-    url: '/recordset/#2/RNASeq:Experiment',
-    app: 'recordset',
-    identifier: 'RNASeq:Experiment',
-    schema_table: 'RNASeq:Experiment',
-    filter: ''
+    url: '/record/#2/RNASeq:Study/RID=14-4KBA',
+    app: 'record',
+    identifier: 'RNASeq:Study/RID=14-4KBA',
+    schema_table: 'RNASeq:Study',
+    filter: 'RID=14-4KBA'
   },
   {
-    url: '/record/#2/Cell_Line:Reporter_Cell_Line/RID=Q-2CW2',
+    url: '/record/#2/Common:Collection/RID=17-E9J6',
     app: 'record',
-    identifier: 'Cell_Line:Reporter_Cell_Line/RID=Q-2CW2',
-    schema_table: 'Cell_Line:Reporter_Cell_Line',
-    filter: 'RID=Q-2CW2'
+    identifier: 'Common:Collection/RID=17-E9J6',
+    schema_table: 'Common:Collection',
+    filter: 'RID=17-E9J6'
   },
   {
     url: '/record/#2/Common:Collection/RID=17-3ZHJ',
@@ -283,6 +268,20 @@ const CHAISE_PERFORMANCE_URLS = [
     filter: 'RID=17-3ZHJ'
   },
   {
+    url: '/recordset/#2/RNASeq:Experiment',
+    app: 'recordset',
+    identifier: 'RNASeq:Experiment',
+    schema_table: 'RNASeq:Experiment',
+    filter: ''
+  },
+  {
+    url: '/recordset/#2/Common:Publication',
+    app: 'recordset',
+    identifier: 'Common:Publication',
+    schema_table: 'Common:Publication',
+    filter: ''
+  },
+  {
     url: '/record/#2/Common:Collection/RID=17-DRBC',
     app: 'record',
     identifier: 'Common:Collection/RID=17-DRBC',
@@ -290,11 +289,39 @@ const CHAISE_PERFORMANCE_URLS = [
     filter: 'RID=17-DRBC'
   },
   {
+    url: '/record/#2/Cell_Line:Reporter_Cell_Line/RID=Q-2CW2',
+    app: 'record',
+    identifier: 'Cell_Line:Reporter_Cell_Line/RID=Q-2CW2',
+    schema_table: 'Cell_Line:Reporter_Cell_Line',
+    filter: 'RID=Q-2CW2'
+  },
+  {
+    url: '/record/#2/Common:Collection/RID=16-X2BE',
+    app: 'record',
+    identifier: 'Common:Collection/RID=16-X2BE',
+    schema_table: 'Common:Collection',
+    filter: 'RID=16-X2BE'
+  },
+  {
     url: '/record/#2/RNASeq:Study/RID=16-1YZM',
     app: 'record',
     identifier: 'RNASeq:Study/RID=16-1YZM',
     schema_table: 'RNASeq:Study',
     filter: 'RID=16-1YZM'
+  },
+  {
+    url: '/record/#2/Protocol:Protocol/RID=17-H31R',
+    app: 'record',
+    identifier: 'Protocol:Protocol/RID=17-H31R',
+    schema_table: 'Protocol:Protocol',
+    filter: 'RID=17-H31R'
+  },
+  {
+    url: '/record/#2/Gene_Expression:Specimen/RID=16-X33J',
+    app: 'record',
+    identifier: 'Gene_Expression:Specimen/RID=16-X33J',
+    schema_table: 'Gene_Expression:Specimen',
+    filter: 'RID=16-X33J'
   },
   {
     url: '/recordset/#2/RNASeq:Study/Consortium=RBK',
@@ -312,11 +339,18 @@ const CHAISE_PERFORMANCE_URLS = [
     filter: 'Species=Homo_Sapiens,Stage=Adult_Human'
   },
   {
-    url: '/record/#2/Common:Collection/RID=16-X2BE',
+    url: '/recordset/#2/Schematics:Schematic_Group',
+    app: 'recordset',
+    identifier: 'Schematics:Schematic_Group',
+    schema_table: 'Schematics:Schematic_Group',
+    filter: ''
+  },
+  {
+    url: '/record/#2/Common:Collection/RID=16-2MTM',
     app: 'record',
-    identifier: 'Common:Collection/RID=16-X2BE',
+    identifier: 'Common:Collection/RID=16-2MTM',
     schema_table: 'Common:Collection',
-    filter: 'RID=16-X2BE'
+    filter: 'RID=16-2MTM'
   },
   // {
   //   url: '/record/#2/Gene_Expression:Specimen/RID=17-HVF2', // missing from staging
@@ -326,49 +360,13 @@ const CHAISE_PERFORMANCE_URLS = [
   //   filter: 'RID=17-HVF2'
   // },
   {
-    url: '/recordset/#2/Cell_Line:Mouse_Strain',
-    app: 'recordset',
-    identifier: 'Cell_Line:Mouse_Strain',
-    schema_table: 'Cell_Line:Mouse_Strain',
-    filter: ''
-  },
-  {
     url: '/record/#2/Gene_Expression:Specimen/RID=16-WHPG',
     app: 'record',
     identifier: 'Gene_Expression:Specimen/RID=16-WHPG',
     schema_table: 'Gene_Expression:Specimen',
     filter: 'RID=16-WHPG'
-  },
-  // {
-  //   url: '/record/#2/Gene_Expression:Specimen/RID=17-HVKT', // missing from staging
-  //   app: 'record',
-  //   identifier: 'Gene_Expression:Specimen/RID=17-HVKT',
-  //   schema_table: 'Gene_Expression:Specimen',
-  //   filter: 'RID=17-HVKT'
-  // },
-  {
-    url: '/recordset/#2/RNASeq:Study/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM6JAEsIAjdafEAJQDkBBAZRwEcQAaEAUQA8AHHDIQC2OCABcA+gzFooATwlUAkgBEJAMwDWOOSAC6AXzah0YsmgoJq9Jqw49+gkeIkOBw0ZIAqc-hu26hhzKKvocWAAWKIS4SJQAjABsALQqAJoAClT6BoZAA',
-    // url: '[{"type":"set", "s_t":"RNASeq:Study", "filters":{"and":[{"src":[{"i":["RNASeq", "Experiment_Study_RID_fkey"]}, {"o":["RNASeq", "Experiment_Experiment_Type_fkey"]}, "RID"], "ch":["16-DYPR"]}]}}]',
-    app: 'recordset',
-    identifier: 'RNASeq:Study',
-    schema_table: 'RNASeq:Study/Experiment_Type=Metabolomics',
-    filter: 'Experiment_Type=Metabolomics'
-  },
-  {
-    url: '/record/#2/Protocol:Protocol/RID=17-H31R',
-    app: 'record',
-    identifier: 'Protocol:Protocol/RID=17-H31R',
-    schema_table: 'Protocol:Protocol',
-    filter: 'RID=17-H31R'
-  },
-  {
-    url: '/record/#2/Vocab:Status/RID=Q-Y61M',
-    app: 'record',
-    identifier: 'Vocab:Status/RID=Q-Y61M',
-    schema_table: 'Vocab:Status',
-    filter: 'RID=Q-Y61M'
-  },
-]
+  }
+];
 
 
 /**
@@ -472,7 +470,6 @@ const waitForRecordMainData = async (page, timeout) => {
 
 const waitForRecordSecondaryData = async (page, timeout) => {
   await page.locator('.related-section-spinner').waitFor({ state: 'detached', timeout })
-  await page.locator('#rt-toc-loading').waitFor({ state: 'detached', timeout })
 };
 
 /**

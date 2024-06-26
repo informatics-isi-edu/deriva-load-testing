@@ -5,8 +5,9 @@
 # $4: the number of pages that we should go through
 # $5: the usecase name (baseline, rsd_elb, rds, etc)
 # $6: number of background users
-# $7: whether we should store the data in db or not
-# ./case_2_experiment.sh 11 "baseline" 10 20
+# $7: whether we should skip storing the data in db (by default we will store the data in db)
+# $8: number of workers (default 1)
+# ./case_2_experiment.sh "some-random-id" 10 12 20 "baseline" 5
 
 # NOTE don't forget to define LOAD_TEST_CLIENT_NAME, LOAD_TEST_AUTH_COOKIE
 export LOAD_TEST_BATCH_ID=$1
@@ -17,6 +18,13 @@ export LOAD_TEST_USE_CASE_LABEL=$5
 export LOAD_TEST_NUM_BG_USERS=$6
 export LOAD_TEST_SKIP_REPORT_SAVE=$7
 
-echo "case_2_experiment.sh with batch_id=$1, run_count=$2, seed=$3, page_size=$4, use_case=$5, num_bg_users=$6, skip_report_save=$7"
+NUM_WORKERS=${8:-1}
 
-time npx playwright test --workers 1 --config case2.config.ts
+echo "running case_2_experiment.sh with batch_id=$1, num_runs=$2, seed=$3, page_size=$4, use_case=$5, num_bg_users=$6, skip_report_save=$7, num_workers=$NUM_WORKERS"
+
+
+if [ $NUM_WORKERS -gt 1 ]; then
+  npx playwright test --workers $NUM_WORKERS --config case2.config.ts --reporter=dot
+else
+  npx playwright test --workers 1 --config case2.config.ts
+fi
