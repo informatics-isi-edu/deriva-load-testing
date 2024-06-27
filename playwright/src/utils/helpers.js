@@ -8,6 +8,37 @@ const SERVER_LOCATION = 'https://staging.atlas-d2k.org/~ashafaei/chaise-load-tes
 
 const CHAISE_PERFORMANCE_URLS = [
   {
+    url: '/recordset/#2/Cell_Line:Parental_Cell_Line',
+    app: 'recordset',
+    identifier: 'Cell_Line:Parental_Cell_Line',
+    schema_table: 'Cell_Line:Parental_Cell_Line',
+    filter: ''
+  },
+  {
+    url: '/recordset/#2/Gene_Expression:Specimen',
+    app: 'recordset',
+    identifier: 'Gene_Expression:Specimen',
+    schema_table: 'Gene_Expression:Specimen',
+    filter: ''
+  },
+  {
+    url: '/record/#2/Cell_Line:Parental_Cell_Line/RID=Q-2D6W',
+    app: 'record',
+    identifier: 'Cell_Line:Parental_Cell_Line/RID=Q-2D6W',
+    schema_table: 'Cell_Line:Parental_Cell_Line',
+    filter: 'RID=Q-2D6W'
+  },
+  {
+    url: '/record/#2/RNASeq:Study/RID=W-R812',
+    app: 'record',
+    identifier: 'RNASeq:Study/RID=W-R812',
+    schema_table: 'RNASeq:Study',
+    filter: 'RID=W-R812'
+  }
+];
+
+const CHAISE_PERFORMANCE_URLS_ORIG = [
+  {
     url: '/recordset/#2/Common:Gene/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM4gEEIBPAfQBEwAXMEAGhCwAsUBLXJOeKjNHAXQC+QoA@sort(RID)',
     app: 'recordset',
     identifier: 'Common:Gene/Any_Data=true',
