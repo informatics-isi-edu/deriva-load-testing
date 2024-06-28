@@ -4,8 +4,6 @@ const REPORT_TABLES = {
   CHAISE_PERFORMANCE: 'https://dev.derivacloud.org/ermrest/catalog/cloud_testing/entity/load-testing:chaise_performance_experiment'
 };
 
-const SERVER_LOCATION = 'https://staging.atlas-d2k.org/~ashafaei/chaise-load-testing/';
-
 const CHAISE_PERFORMANCE_URLS = [
   {
     url: '/recordset/#2/Cell_Line:Parental_Cell_Line',
@@ -522,7 +520,6 @@ const waitForImages = async (page, timeout) => {
 
 // NOTE we have to use this syntax since this file is also used by artillery
 module.exports = {
-  SERVER_LOCATION,
   REPORT_TABLES,
   getRandomInt,
   getRandomIntWithSeed,

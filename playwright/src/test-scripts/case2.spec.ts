@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import axios from 'axios';
 import {
-  REPORT_TABLES, SERVER_LOCATION,
+  REPORT_TABLES,
   convertDateToLocal, interval, shuffleChaisePerformanceURLs,
   waitForRecordsetSecondaryData, waitForRecordsetMainData,
   waitForNavbar, waitForRecordMainData, waitForRecordSecondaryData
@@ -13,6 +13,7 @@ type ReportType = {
   navbar_load_chaise_manual: number, main_data_load_chaise_manual: number, full_page_load_chaise_manual: number,
 };
 
+const baseURL = process.env.LOAD_TEST_CHAISE_URL;
 const saveToDB = process.env.LOAD_TEST_SKIP_REPORT_SAVE != 'true';
 const numRuns = parseInt(process.env.LOAD_TEST_NUM_RUNS!);
 const seed = parseInt(process.env.LOAD_TEST_SEED!);
@@ -25,48 +26,68 @@ for (let runNumber = 1; runNumber <= numRuns; runNumber++) {
     test(`${runNumber}, ${pageOrder + 1}: open ${urlProps.app}, ${urlProps.identifier}`, async ({ page }) => {
       test.setTimeout(60 * 1000);
 
-      let report: any = {}, startTime: number, hasError: boolean;
+      let report: any = {}, startTime: number, hasError: boolean, reportedFullPageLoad = -1, temp;
       report = { ...urlProps };
-      report['page_order'] = pageOrder;
+      report['page_order'] = pageOrder + 1;
       report['run_number'] = runNumber;
 
-      if (saveToDB) {
-        page.on('console', msg => {
-          if (msg.type() === 'log') {
-            const text = msg.text();
-            if (text.startsWith('navbar_load_chaise_manual')) {
-              report['navbar_load_chaise_manual'] = parseFloat(text.slice(27));
-            }
-            if (text.startsWith('main_data_load_chaise_manual')) {
-              report['main_data_load_chaise_manual'] = parseFloat(text.slice(30));
-            }
-            if (text.startsWith('full_page_load_chaise_manual')) {
-              report['full_page_load_chaise_manual'] = parseFloat(text.slice(30));
+      // capture the manually reported times in console
+      page.on('console', msg => {
+        if (!saveToDB || msg.type() !== 'log') return;
+        const text = msg.text();
+        if (text.startsWith('navbar_load_chaise_manual')) {
+          report['navbar_load_chaise_manual'] = parseFloat(text.slice(27));
+        }
+        if (text.startsWith('main_data_load_chaise_manual')) {
+          report['main_data_load_chaise_manual'] = parseFloat(text.slice(30));
+        }
+        if (text.startsWith('full_page_load_chaise_manual')) {
+          report['full_page_load_chaise_manual'] = parseFloat(text.slice(30));
+        }
+        /**
+         * in recordset case we don't know which happens first (or if there's even any aggregates), so wre look for both
+         */
+        if (report['app'] === 'recordset') {
+          let facets = text.startsWith('all_facets_loaded_chaise_manual');
+          let aggregates = text.startsWith('all_aggregates_loaded_chaise_manual');
+          if (facets || aggregates) {
+            temp = parseFloat(text.slice(facets ? 33 : 37));
+            if (temp > reportedFullPageLoad) {
+              reportedFullPageLoad = temp;
+              report['full_page_load_chaise_manual'] = temp;
             }
           }
-        });
-      }
 
-      await test.step(`navbar_load`, async () => {
-        report['min_t0'] = convertDateToLocal(new Date());
-        startTime = performance.now();
-        await page.goto(SERVER_LOCATION + urlProps.url);
-        try {
-          await waitForNavbar(page);
-          report['navbar_load'] = interval(startTime, performance.now());
-          hasError = false;
-        } catch (exp) {
-          console.log('error while waiting for navbar to load');
-          console.error(exp);
-          report['navbar_load'] = -1;
-          report['main_data_load'] = -1;
-          report['full_page_load'] = -1;
-          hasError = true;
+          /**
+           * since we're sending facet and main request at the same time, we might get the facet result before the main one.
+           * so in herer we're going to correct that.
+           */
+          if (report['main_data_load_chaise_manual'] > report['full_page_load_chaise_manual']) {
+            report['full_page_load_chaise_manual'] = report['main_data_load_chaise_manual'];
+          }
         }
       });
 
-      await test.step(`main_data_load`, async () => {
-        if (hasError) return;
+      report['min_t0'] = convertDateToLocal(new Date());
+      startTime = performance.now();
+      await page.goto(baseURL + urlProps.url);
+
+      // navbar
+      try {
+        await waitForNavbar(page);
+        report['navbar_load'] = interval(startTime, performance.now());
+        hasError = false;
+      } catch (exp) {
+        console.log('error while waiting for navbar to load');
+        console.error(exp);
+        report['navbar_load'] = -1;
+        report['main_data_load'] = -1;
+        report['full_page_load'] = -1;
+        hasError = true;
+      }
+
+      // main data
+      if (!hasError) {
         try {
           if (urlProps.app === 'recordset') {
             await waitForRecordsetMainData(page);
@@ -75,14 +96,15 @@ for (let runNumber = 1; runNumber <= numRuns; runNumber++) {
           }
           report['main_data_load'] = interval(startTime, performance.now());
         } catch (exp) {
+          hasError = true;
           console.log('error while waiting for main data to load');
           console.error(exp);
           report['main_data_load'] = -1;
         }
-      });
+      }
 
-      await test.step(`full_page_load`, async () => {
-        if (hasError) return;
+      // full page
+      if (!hasError) {
         try {
           if (urlProps.app === 'recordset') {
             await waitForRecordsetSecondaryData(page);
@@ -95,12 +117,10 @@ for (let runNumber = 1; runNumber <= numRuns; runNumber++) {
           console.error(exp);
           report['full_page_load'] = -1;
         }
-      });
+      }
 
       if (saveToDB) {
-        await test.step('add report', async () => {
-          allReports.push(report);
-        });
+        allReports.push(report);
       }
     });
   }
@@ -109,7 +129,7 @@ for (let runNumber = 1; runNumber <= numRuns; runNumber++) {
 test.afterAll(async () => {
   if (!saveToDB) return;
 
-  const data = allReports.map((r, i) => {
+  const data = allReports.map((r) => {
     return {
       batch_id: process.env.LOAD_TEST_BATCH_ID,
       run_number: r['run_number'],
