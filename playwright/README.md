@@ -2,8 +2,6 @@
 
 This folder contains several test scenarios that we can run to evaluate the performance of chaise pages.
 
-> :warning: The content in this file are not representing the latest changes. I'll update it once everything is stable.
-
 ## Prerequisites
 If you're running this on a fresh Ubuntu installation, you first need to install `make` and `nodejs`. The following is how I would do it:
 
@@ -24,55 +22,53 @@ Before running the scripts, you need to install the dependencies by running the 
 make deps
 ```
 
+## `.env` file
+
+There are two environment variables that are needed for both scripts. To make defining these variables easiers, we're using the `.env` file:
+
+1. Create a `.env` file by douplicating the `.env-sample`.
+2. Change the `LOAD_TEST_AUTH_COOKIE` to be the cookie of the user that has write access to the `cloud_testing` catalog.
+3. Change `LOAD_TEST_CLIENT_NAME` to describe the current client.
+
 ## Scripts
 
 The following are the prepared scripts and how to run each:
 
-### Image table
+### Case 1
 
-This is designed to report how long it took for the image table to show the images.
+In this experiment, we open the given chaise page and report how long it took for all the images to show up. We're using Playwright to generate a HAR file for us and then the analysis is done based on this file.
 
-
-Before running the command make sure in the `playwright.config.ts`, the setup and teardown scripts are definde properly (no globalSetup is needed):
-
-```
-globalSetup: require.resolve('./src/utils/image.setup'),
-globalTeardown: require.resolve('./src/utils/image.teardown')
-```
-
-To run this,
+To run this for a "signed" case:
 
 ```
-npx playwright test image
+./case-1-experiment.sh true
 ```
 
-The following environment variables can be used to customize this script:
-
-- `LOAD_TEST_RELOAD_COUNT`: How many times we should reload the page (default: 10).
-- `LOAD_TEST_PAGE_SIZE`: What is the page size (default: 100).
-- `LOAD_TEST_CHAISE_URL`: the image recordset url (has no default and is needed)
-- `LOAD_TEST_ERMREST_MAIN_URL_PREFIX`: the ermrest url prefix that can be used to identify the main request (has no default and is needed).
-- `LOAD_TEST_HATRAC_URL_PREFIX`: the prefix of hatrac urls (has no default and is needed).
-- `LOAD_TEST_CLIENT_NAME`: is used for saving the report in the database.
-- `LOAD_TEST_AUTH_COOKIE`: is used for saving the report in the database.
-
-
-### Recordset table
-
-This is designed to report the performance of a recordset page. It will open a recordset page and report how long each step took.
-
-Before running the command make sure in the `playwright.config.ts`, the setup and teardown scripts are definde properly:
+And for "unsigned":
 
 ```
-globalSetup: require.resolve('./src/utils/playwright.setup'),
-globalTeardown: require.resolve('./src/utils/playwright.teardown')
-```
-
-To run this,
-
-```
-npx playwright test recordset
+./case-2-experiment.sh false
 ```
 
 
+### Case 2
 
+This is designed to report the performance of a recordset and record pages. Each time this script is called is called a "measurement". Each measurement consists of one or multiple "run"s. In each run we're going to open one or multipl chaise pages. For each page visit we will report how long it took to each milestone (in milliseconds). Each page visit will be stored in a different row in the database.
+
+You can run this by calling `case_2_experiment.sh` with the following arguments:
+
+1. The chaise base url.
+2. The `batch_id` of the experiment.
+3. Number of runs (repetitions).
+4. The seed that we should use for randomizing the order of pages.
+5. Page size (how many pages we should go through).
+6. The use case label (only used for storing in the database).
+7. Number of background users (only used for storing in the database).
+8. (optional) Whether we should skip saving in the database or not
+9. (optional) Number of workers that playwright should use for parallelism.
+
+For instance
+
+```
+./case_2_experiment.sh "https://staging.atlas-d2k.org/~ashafaei/chaise-load-testing/"  "$(uuidgen)" 2 12 4 "test-chaise-manual" 0
+```
