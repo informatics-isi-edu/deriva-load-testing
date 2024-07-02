@@ -1,7 +1,7 @@
 #!/bin/bash
 # $1: chaise url
 # $2: the batch id
-# $3: how many times we should go through the pages (default 10)
+# $3: number of runs or how many times we should go through the list of pages (default 10)
 # $4: the seed number that will be used for ordering the URLs.
 # $5: the number of pages that we should go through
 # $6: the usecase name (baseline, rsd_elb, rds, etc)

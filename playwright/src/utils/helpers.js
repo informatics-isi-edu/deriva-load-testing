@@ -20,6 +20,27 @@ const CHAISE_PERFORMANCE_URLS = [
     filter: ''
   },
   {
+    url: '/recordset/#2/RNASeq:Study',
+    app: 'recordset',
+    identifier: 'RNASeq:Study',
+    schema_table: 'RNASeq:Study',
+    filter: ''
+  },
+  {
+    url: '/recordset/#2/Common:Gene/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM4gEEIBPAfQBEwAXMEAGhCwAsUBLXJOeKjNHAXQC+QoA@sort(RID)',
+    app: 'recordset',
+    identifier: 'Common:Gene/Any_Data=true',
+    schema_table: 'Common:Gene',
+    filter: 'Any_Data=true'
+  },
+  {
+    url: '/recordset/#2/Common:Protein',
+    app: 'recordset',
+    identifier: 'Common:Protein',
+    schema_table: 'Common:Protein',
+    filter: ''
+  },
+  {
     url: '/record/#2/Cell_Line:Parental_Cell_Line/RID=Q-2D6W',
     app: 'record',
     identifier: 'Cell_Line:Parental_Cell_Line/RID=Q-2D6W',
@@ -32,7 +53,28 @@ const CHAISE_PERFORMANCE_URLS = [
     identifier: 'RNASeq:Study/RID=W-R812',
     schema_table: 'RNASeq:Study',
     filter: 'RID=W-R812'
-  }
+  },
+  {
+    url: '/record/#2/Common:Collection/RID=17-E76T',
+    app: 'record',
+    identifier: 'Common:Collection/RID=17-E76T',
+    schema_table: 'Common:Collection',
+    filter: 'RID=17-E76T'
+  },
+  {
+    url: '/record/#2/Gene_Expression:Specimen/RID=16-X33J',
+    app: 'record',
+    identifier: 'Gene_Expression:Specimen/RID=16-X33J',
+    schema_table: 'Gene_Expression:Specimen',
+    filter: 'RID=16-X33J'
+  },
+  {
+    url: '/record/#2/RNASeq:Study/RID=W-RAHW',
+    app: 'record',
+    identifier: 'RNASeq:Study/RID=W-RAHW',
+    schema_table: 'RNASeq:Study',
+    filter: 'RID=W-RAHW'
+  },
 ];
 
 const CHAISE_PERFORMANCE_URLS_ORIG = [
@@ -99,7 +141,7 @@ const CHAISE_PERFORMANCE_URLS_ORIG = [
     app: 'record',
     identifier: 'RNASeq:Experiment/RID=14-4KPM',
     schema_table: 'RNASeq:Experiment',
-    filter: 'Assay_Type=ISH'
+    filter: 'RID=14-4KPM'
   },
   {
     url: '/recordset/#2/RNASeq:Study/*::facets::N4IghgdgJiBcDaoDOB7ArgJwMYFM6JAEsIAjdafEAJQDkBBAZRwEcQAaEAUQA8AHHDIQC2OCABcA+gzFooATwlUAkgBEJAMwDWOOSAC6AXzah0YsmgoJq9Jqw49+gkeIkOBw0ZIAqc-hu26hhzKKvocWAAWKIS4SJQAigC0AJoAUskATOwgAIwAbInxANI0XvoGhkA',
