@@ -22,7 +22,7 @@ export LOAD_TEST_SKIP_REPORT_SAVE=$8
 
 NUM_WORKERS=${9:-1}
 
-echo "running case_2_experiment.sh with batch_id=$2, num_runs=$3, seed=$4, page_size=$5, use_case=$6, num_bg_users=$7, skip_report_save=$8, num_workers=$NUM_WORKERS"
+echo "running case_2_experiment.sh with chaise_url=$1, batch_id=$2, num_runs=$3, seed=$4, page_size=$5, use_case=$6, num_bg_users=$7, skip_report_save=$8, num_workers=$NUM_WORKERS"
 
 
 if [ $NUM_WORKERS -gt 1 ]; then
