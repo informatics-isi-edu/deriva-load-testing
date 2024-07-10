@@ -1,7 +1,11 @@
 const REPORT_TABLES = {
-  SIGNED: 'https://dev.derivacloud.org/ermrest/catalog/cloud_testing/entity/load-testing:signed_url_experiment',
-  UNSIGNED: 'https://dev.derivacloud.org/ermrest/catalog/cloud_testing/entity/load-testing:unsigned_url_experiment',
-  CHAISE_PERFORMANCE: 'https://dev.derivacloud.org/ermrest/catalog/cloud_testing/entity/load-testing:chaise_performance_experiment'
+  // SIGNED: 'https://dev.derivacloud.org/ermrest/catalog/cloud_testing/entity/load-testing:signed_url_experiment',
+  // UNSIGNED: 'https://dev.derivacloud.org/ermrest/catalog/cloud_testing/entity/load-testing:unsigned_url_experiment',
+  // CHAISE_PERFORMANCE: 'https://dev.derivacloud.org/ermrest/catalog/cloud_testing/entity/load-testing:chaise_performance_experiment'
+  SIGNED: 'https://tutorial.derivacloud.org/ermrest/catalog/cloud_testing/entity/load_testing:signed_url_experiment',
+  UNSIGNED: 'https://tutorial.derivacloud.org/ermrest/catalog/cloud_testing/entity/load_testing:unsigned_url_experiment',
+  // CHAISE_PERFORMANCE: 'https://tutorial.derivacloud.org/ermrest/catalog/cloud_testing/entity/load_testing:chaise_concurrent_experiment'
+  CHAISE_PERFORMANCE: 'https://tutorial.derivacloud.org/ermrest/catalog/cloud_testing/entity/load_testing:chaise_concurrent_experiment_test'
 };
 
 const CHAISE_PERFORMANCE_URLS = [
@@ -78,13 +82,13 @@ const CHAISE_PERFORMANCE_URLS = [
     schema_table: 'RNASeq:Study',
     filter: 'Experiment_Type=snRNA-Seq,scRNA-Seq'
   },
-  // {
-  //   url: '/record/#2/RNASeq:Study/RID=17-HW4W', // missing from staging
-  //   app: 'record',
-  //   identifier: 'RNASeq:Study/RID=17-HW4W',
-  //   schema_table: 'RNASeq:Study/RID=17-HW4W',
-  //   filter: 'RID=17-HW4W'
-  // },
+  {
+    url: '/record/#2/RNASeq:Study/RID=17-HW4W', // missing from staging
+    app: 'record',
+    identifier: 'RNASeq:Study/RID=17-HW4W',
+    schema_table: 'RNASeq:Study/RID=17-HW4W',
+    filter: 'RID=17-HW4W'
+  },
   {
     url: '/recordset/#2/Cell_Line:Parental_Cell_Line',
     app: 'recordset',
@@ -157,13 +161,13 @@ const CHAISE_PERFORMANCE_URLS = [
     schema_table: 'Common:Protein',
     filter: ''
   },
-  // {
-  //   url: '/record/#2/Gene_Expression:Specimen/RID=17-HVEW', // missing from staging
-  //   app: 'record',
-  //   identifier: 'Gene_Expression:Specimen/RID=17-HVEW',
-  //   schema_table: 'Gene_Expression:Specimen',
-  //   filter: 'RID=17-HVEW'
-  // },
+  {
+    url: '/record/#2/Gene_Expression:Specimen/RID=17-HVEW', // missing from staging
+    app: 'record',
+    identifier: 'Gene_Expression:Specimen/RID=17-HVEW',
+    schema_table: 'Gene_Expression:Specimen',
+    filter: 'RID=17-HVEW'
+  },
   {
     url: '/recordset/#2/Antibody:Antibody_Tests',
     app: 'recordset',
@@ -350,13 +354,13 @@ const CHAISE_PERFORMANCE_URLS = [
     schema_table: 'Common:Collection',
     filter: 'RID=16-2MTM'
   },
-  // {
-  //   url: '/record/#2/Gene_Expression:Specimen/RID=17-HVF2', // missing from staging
-  //   app: 'record',
-  //   identifier: 'Gene_Expression:Specimen/RID=17-HVF2',
-  //   schema_table: 'Gene_Expression:Specimen',
-  //   filter: 'RID=17-HVF2'
-  // },
+  {
+    url: '/record/#2/Gene_Expression:Specimen/RID=17-HVF2', // missing from staging
+    app: 'record',
+    identifier: 'Gene_Expression:Specimen/RID=17-HVF2',
+    schema_table: 'Gene_Expression:Specimen',
+    filter: 'RID=17-HVF2'
+  },
   {
     url: '/record/#2/Gene_Expression:Specimen/RID=16-WHPG',
     app: 'record',

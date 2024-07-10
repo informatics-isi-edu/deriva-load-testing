@@ -13,7 +13,7 @@ async function testChaisePageLoad(page, userContext, events, test) {
   let urlProps = pickARandomChaisePerformanceURL(seed);
 
   await test.step('navbar_load', async () => {
-    const url = SERVER_LOCATION + urlProps.url;
+    const url = urlProps.url;
     // console.log(url)
     await page.goto(url);
     await waitForNavbar(page);
