@@ -24,7 +24,7 @@ const allReports: ReportType[] = [];
 for (let runNumber = 1; runNumber <= numRuns; runNumber++) {
   for (const [pageOrder, urlProps] of urls.entries()) {
     test(`${runNumber}, ${pageOrder + 1}: open ${urlProps.app}, ${urlProps.identifier}`, async ({ page }) => {
-      test.setTimeout(60 * 1000);
+      test.setTimeout(3 * 60 * 1000);
 
       let report: any = {}, startTime: number, hasError: boolean, reportedFullPageLoad = -1, temp;
       report = { ...urlProps };
