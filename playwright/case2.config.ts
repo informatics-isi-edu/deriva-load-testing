@@ -9,7 +9,7 @@ const cookie = process.env.LOAD_TEST_AUTH_COOKIE;
 if (!clientName || !cookie) {
  throw new Error('LOAD_TEST_CLIENT_NAME and LOAD_TEST_AUTH_COOKIE are needed');
 }
-console.log(`client name: ${clientName}\nauth cookie: ${cookie}`);
+// console.log(`client name: ${clientName}\nauth cookie: ${cookie}`);
 
 const saveToDB = process.env.LOAD_TEST_SKIP_REPORT_SAVE != 'true';
 

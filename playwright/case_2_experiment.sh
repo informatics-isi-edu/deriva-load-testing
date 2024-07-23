@@ -26,7 +26,7 @@ echo "running case_2_experiment.sh with chaise_url=$1, batch_id=$2, num_runs=$3,
 
 
 if [ $NUM_WORKERS -gt 1 ]; then
-  npx playwright test --workers $NUM_WORKERS --config case2.config.ts --reporter=dot
+  npx playwright test --workers $NUM_WORKERS --config case2.config.ts
 else
   npx playwright test --workers 1 --config case2.config.ts
 fi
