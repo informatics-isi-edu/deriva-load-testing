@@ -15,6 +15,8 @@ type ReportType = {
 
 const baseURL = process.env.LOAD_TEST_CHAISE_URL;
 const saveToDB = process.env.LOAD_TEST_SKIP_REPORT_SAVE != 'true';
+const isBackground = process.env.LOAD_TEST_IS_BACKGROUND == 'true';
+
 const numRuns = parseInt(process.env.LOAD_TEST_NUM_RUNS!);
 const seed = parseInt(process.env.LOAD_TEST_SEED!);
 const urls = shuffleChaisePerformanceURLs(seed, parseInt(process.env.LOAD_TEST_PAGE_SIZE!));
@@ -156,8 +158,9 @@ test.afterAll(async () => {
   // console.log(data);
 
   try {
-    await axios.post(REPORT_TABLES.CHAISE_PERFORMANCE, data, { headers: { Cookie: process.env.LOAD_TEST_AUTH_COOKIE } });
-    console.log('saved the report in the database.');
+    const table = isBackground ? REPORT_TABLES.CHAISE_PERFORMANCE_BG : REPORT_TABLES.CHAISE_PERFORMANCE;
+    await axios.post(table, data, { headers: { Cookie: process.env.LOAD_TEST_AUTH_COOKIE } });
+    console.log(`saved the${isBackground ? ' background ': ' '}report in the database.`);
   } catch (err) {
     console.log('unable to save the report in the database.');
     console.log(err);

@@ -5,7 +5,8 @@ const REPORT_TABLES = {
   SIGNED: 'https://tutorial.derivacloud.org/ermrest/catalog/cloud_testing/entity/load_testing:signed_url_experiment',
   UNSIGNED: 'https://tutorial.derivacloud.org/ermrest/catalog/cloud_testing/entity/load_testing:unsigned_url_experiment',
   // CHAISE_PERFORMANCE: 'https://tutorial.derivacloud.org/ermrest/catalog/cloud_testing/entity/load_testing:chaise_concurrent_experiment'
-  CHAISE_PERFORMANCE: 'https://tutorial.derivacloud.org/ermrest/catalog/cloud_testing/entity/load_testing:chaise_concurrent_experiment_test_w_chaise_manual'
+  CHAISE_PERFORMANCE: 'https://tutorial.derivacloud.org/ermrest/catalog/cloud_testing/entity/load_testing:chaise_concurrent_experiment_test_w_chaise_manual',
+  CHAISE_PERFORMANCE_BG: 'https://tutorial.derivacloud.org/ermrest/catalog/cloud_testing/entity/load_testing:chaise_concurrent_experiment_test_w_chaise_manual_bg'
 };
 
 const CHAISE_PERFORMANCE_URLS = [
