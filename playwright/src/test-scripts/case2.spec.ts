@@ -29,20 +29,52 @@ for (let runNumber = 1; runNumber <= numRuns; runNumber++) {
       test.setTimeout(3 * 60 * 1000);
 
       let report: any = {}, startTime: number, hasError: boolean, reportedFullPageLoad = -1, temp;
+      let navbarFailure = false, mainDataFailure = false, fullPageFailure = false, errMessage;
       report = { ...urlProps };
       report['page_order'] = pageOrder + 1;
       report['run_number'] = runNumber;
+      report['errors'] = '';
 
       // capture the manually reported times in console
       page.on('console', msg => {
         if (!saveToDB || msg.type() !== 'log') return;
         const text = msg.text();
+        if (text.startsWith('navbar_load_failure')) {
+          console.log(text);
+          report['errors'] += text + '\n';
+
+          navbarFailure = true;
+          report['navbar_load_chaise_manual'] = null;
+          report['main_data_load_chaise_manual'] = null;
+          report['full_page_load_chaise_manual'] = null;
+        }
+        if (text.startsWith('main_data_load_failure')) {
+          console.log(text);
+          report['errors'] += text + '\n';
+
+          mainDataFailure = true;
+          report['main_data_load_chaise_manual'] = null;
+          report['full_page_load_chaise_manual'] = null;
+        }
+        if (text.startsWith('full_page_load_failure')) {
+          console.log(text);
+          report['errors'] += text + '\n';
+
+          fullPageFailure = true;
+          report['full_page_load_chaise_manual'] = null;
+        }
+
+        if (navbarFailure) return;
         if (text.startsWith('navbar_load_chaise_manual')) {
           report['navbar_load_chaise_manual'] = parseFloat(text.slice(27));
         }
+
+        if (mainDataFailure) return;
         if (text.startsWith('main_data_load_chaise_manual')) {
           report['main_data_load_chaise_manual'] = parseFloat(text.slice(30));
         }
+
+        if (fullPageFailure) return;
         if (text.startsWith('full_page_load_chaise_manual')) {
           report['full_page_load_chaise_manual'] = parseFloat(text.slice(30));
         }
@@ -151,7 +183,8 @@ test.afterAll(async () => {
       full_page_load: r['full_page_load'],
       navbar_load_chaise_manual: r['navbar_load_chaise_manual'],
       main_data_load_chaise_manual: r['main_data_load_chaise_manual'],
-      full_page_load_chaise_manual: r['full_page_load_chaise_manual']
+      full_page_load_chaise_manual: r['full_page_load_chaise_manual'],
+      errors: r['errors']
     }
   });
 
