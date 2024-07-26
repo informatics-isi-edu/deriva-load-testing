@@ -37,7 +37,7 @@ for (let runNumber = 1; runNumber <= numRuns; runNumber++) {
 
       // capture the manually reported times in console
       page.on('console', msg => {
-        if (!saveToDB || msg.type() !== 'log') return;
+        if (msg.type() !== 'log') return;
         const text = msg.text();
         if (text.startsWith('navbar_load_failure')) {
           console.log(text);
