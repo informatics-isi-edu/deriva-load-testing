@@ -184,7 +184,7 @@ test.afterAll(async () => {
       navbar_load_chaise_manual: r['navbar_load_chaise_manual'],
       main_data_load_chaise_manual: r['main_data_load_chaise_manual'],
       full_page_load_chaise_manual: r['full_page_load_chaise_manual'],
-      errors: r['errors']
+      errors: r['errors'] === '' ? null : r['errors']
     }
   });
 
