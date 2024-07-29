@@ -130,10 +130,11 @@ for (let runNumber = 1; runNumber <= numRuns; runNumber++) {
           }
           report['main_data_load'] = interval(startTime, performance.now());
         } catch (exp) {
-          hasError = true;
           console.log('error while waiting for main data to load');
           console.error(exp);
           report['main_data_load'] = -1;
+          report['full_page_load'] = -1;
+          hasError = true;
         }
       }
 
