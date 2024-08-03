@@ -83,12 +83,23 @@ const CHAISE_PERFORMANCE_URLS = [
     schema_table: 'RNASeq:Study',
     filter: 'Experiment_Type=snRNA-Seq,scRNA-Seq'
   },
+  /**
+   * for the final experiment we switched to the production server, but the following
+   * record was not available to anonymous users, so we replace it with the one after
+   */
+  // {
+  //   url: '/record/#2/RNASeq:Study/RID=17-HW4W', // missing from staging
+  //   app: 'record',
+  //   identifier: 'RNASeq:Study/RID=17-HW4W',
+  //   schema_table: 'RNASeq:Study/RID=17-HW4W',
+  //   filter: 'RID=17-HW4W'
+  // },
   {
-    url: '/record/#2/RNASeq:Study/RID=17-HW4W', // missing from staging
+    url: '/record/#2/RNASeq:Study/RID=17-J0JY',
     app: 'record',
-    identifier: 'RNASeq:Study/RID=17-HW4W',
-    schema_table: 'RNASeq:Study/RID=17-HW4W',
-    filter: 'RID=17-HW4W'
+    identifier: 'RNASeq:Study/RID=17-J0JY',
+    schema_table: 'RNASeq:Study',
+    filter: 'RID=17-J0JY'
   },
   {
     url: '/recordset/#2/Cell_Line:Parental_Cell_Line',
@@ -162,12 +173,23 @@ const CHAISE_PERFORMANCE_URLS = [
     schema_table: 'Common:Protein',
     filter: ''
   },
+  /**
+   * for the final experiment we switched to the production server, but the following
+   * record was not available to anonymous users, so we replace it with the one after
+   */
+  // {
+  //   url: '/record/#2/Gene_Expression:Specimen/RID=17-HVEW', // missing from staging
+  //   app: 'record',
+  //   identifier: 'Gene_Expression:Specimen/RID=17-HVEW',
+  //   schema_table: 'Gene_Expression:Specimen',
+  //   filter: 'RID=17-HVEW'
+  // },
   {
-    url: '/record/#2/Gene_Expression:Specimen/RID=17-HVEW', // missing from staging
+    url: '/record/#2/Gene_Expression:Specimen/RID=17-J0KE',
     app: 'record',
-    identifier: 'Gene_Expression:Specimen/RID=17-HVEW',
+    identifier: 'Gene_Expression:Specimen/RID=17-J0KE',
     schema_table: 'Gene_Expression:Specimen',
-    filter: 'RID=17-HVEW'
+    filter: 'RID=17-J0KE'
   },
   {
     url: '/recordset/#2/Antibody:Antibody_Tests',
@@ -355,12 +377,23 @@ const CHAISE_PERFORMANCE_URLS = [
     schema_table: 'Common:Collection',
     filter: 'RID=16-2MTM'
   },
+  /**
+   * for the final experiment we switched to the production server, but the following
+   * record was not available to anonymous users, so we replace it with the one after
+   */
+  // {
+  //   url: '/record/#2/Gene_Expression:Specimen/RID=17-HVF2', // missing from staging
+  //   app: 'record',
+  //   identifier: 'Gene_Expression:Specimen/RID=17-HVF2',
+  //   schema_table: 'Gene_Expression:Specimen',
+  //   filter: 'RID=17-HVF2'
+  // },
   {
-    url: '/record/#2/Gene_Expression:Specimen/RID=17-HVF2', // missing from staging
+    url: '/record/#2/Gene_Expression:Specimen/RID=17-J04G',
     app: 'record',
-    identifier: 'Gene_Expression:Specimen/RID=17-HVF2',
+    identifier: 'Gene_Expression:Specimen/RID=17-J04G',
     schema_table: 'Gene_Expression:Specimen',
-    filter: 'RID=17-HVF2'
+    filter: 'RID=17-J04G'
   },
   {
     url: '/record/#2/Gene_Expression:Specimen/RID=16-WHPG',
