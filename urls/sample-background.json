@@ -1,0 +1,23 @@
+[
+  {
+    "url": "/recordset/#1/MySchema:MyTable",
+    "app": "recordset",
+    "identifier": "MySchema:MyTable",
+    "schema_table": "MySchema:MyTable",
+    "filter": ""
+  },
+  {
+    "url": "/recordset/#1/MySchema:AnotherTable",
+    "app": "recordset",
+    "identifier": "MySchema:AnotherTable",
+    "schema_table": "MySchema:AnotherTable",
+    "filter": ""
+  },
+  {
+    "url": "/record/#1/MySchema:MyTable/RID=1-ABCD",
+    "app": "record",
+    "identifier": "MySchema:MyTable/RID=1-ABCD",
+    "schema_table": "MySchema:MyTable",
+    "filter": "RID=1-ABCD"
+  }
+]

@@ -1,0 +1,36 @@
+[
+  {
+    "url": "/recordset/#1/MySchema:MyTable",
+    "app": "recordset",
+    "identifier": "MySchema:MyTable",
+    "schema_table": "MySchema:MyTable",
+    "filter": ""
+  },
+  {
+    "url": "/record/#1/MySchema:MyTable/RID=1-ABCD",
+    "app": "record",
+    "identifier": "MySchema:MyTable/RID=1-ABCD",
+    "schema_table": "MySchema:MyTable",
+    "filter": "RID=1-ABCD"
+  },
+  {
+    "url": "/recordedit/#1/MySchema:MyTable/RID=1-ABCD",
+    "app": "recordedit",
+    "identifier": "edit MySchema:MyTable/RID=1-ABCD",
+    "schema_table": "MySchema:MyTable",
+    "filter": "RID=1-ABCD",
+    "action": "submit",
+    "inputs": []
+  },
+  {
+    "url": "/recordedit/#1/MySchema:MyTable/RID=1-ABCD",
+    "app": "recordedit",
+    "identifier": "edit-with-change MySchema:MyTable/RID=1-ABCD",
+    "schema_table": "MySchema:MyTable",
+    "filter": "RID=1-ABCD",
+    "action": "submit",
+    "inputs": [
+      { "name": "Description", "value": "load test edit" }
+    ]
+  }
+]

@@ -1,11 +1,21 @@
-*/node_modules/
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
 
-/playwright/test-results/
-/playwright/.temp-report.json
-/playwright/test-report.json
-/playwright/test-report-summary.md
-/playwright/test-report-signed.json
-/playwright/test-report-unsigned.json
-/playwright/*.har
-/playwright/har-files/
-/playwright/.env
+# env
+.env
+
+# experiment outputs (raw data + charts)
+*.csv
+*.html
+*.png
+/results/
+/output/
+
+# OS
+.DS_Store
