@@ -17,5 +17,8 @@ dist/
 /results/
 /output/
 
+# personal url pools (the sample-*.json stay tracked)
+urls/my-*.json
+
 # OS
 .DS_Store

@@ -15,17 +15,23 @@ import json
 import random
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Literal, get_args
 
-VALID_APPS = ("record", "recordset", "recordedit")
+AppType = Literal["record", "recordset", "recordedit"]
 
 
 @dataclass
 class PageURL:
-    """One page to visit."""
+    """a page to visit"""
 
-    url: str            # path appended to the chaise base url, e.g. "/recordset/#1/S:T"
-    app: str            # "record" | "recordset" | "recordedit"
-    identifier: str     # human-readable label for reports
+    url: str
+    """path appended to the chaise base url, e.g. '/recordset/#1/S:T'"""
+
+    app: AppType
+
+    identifier: str
+    """human-readable label for reports"""
+
     schema_table: str = ""
     filter: str = ""
 
@@ -37,18 +43,24 @@ class PageURL:
 
 
 def load_urls(path: str | Path) -> list[PageURL]:
-    """Load and validate the URL list from a JSON file."""
+    """load and validate a file containing the urls"""
     data = json.loads(Path(path).read_text())
     if not isinstance(data, list) or not data:
         raise ValueError(f"{path}: expected a non-empty JSON array of URL entries")
 
     pages: list[PageURL] = []
+
     for i, entry in enumerate(data):
+        if not isinstance(entry, dict):
+            raise ValueError(f"{path}: entry {i} is not an object")
+
+        if "url" not in entry:
+            raise ValueError(f"{path}: entry {i} is missing required 'url' key")
+
         app = entry.get("app")
-        if app not in VALID_APPS:
-            raise ValueError(f"{path}[{i}]: 'app' must be one of {VALID_APPS}, got {app!r}")
-        if not entry.get("url"):
-            raise ValueError(f"{path}[{i}]: 'url' is required")
+        if app not in get_args(AppType):
+            raise ValueError(f"{path}: entry {i} has invalid app '{app}'")
+
         pages.append(
             PageURL(
                 url=entry["url"],
@@ -65,7 +77,7 @@ def load_urls(path: str | Path) -> list[PageURL]:
 
 def ordered(
     pages: list[PageURL],
-    order: str = "sequential",
+    order: Literal["sequential", "shuffle"] = "sequential",
     seed: int = 12,
     count: int | None = None,
 ) -> list[PageURL]:

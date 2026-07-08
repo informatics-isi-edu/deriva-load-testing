@@ -24,6 +24,16 @@ uv sync
 uv run playwright install chromium
 ```
 
+## Development
+
+Formatting and linting use [ruff](https://docs.astral.sh/ruff/), pinned as a dev dependency
+(config in `pyproject.toml`):
+
+```bash
+uv run ruff format .   # format
+uv run ruff check .    # lint
+```
+
 ## Auth
 
 Pages are usually not anonymous. Provide a `webauthn` cookie for the target via `--cookie`
