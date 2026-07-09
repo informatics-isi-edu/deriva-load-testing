@@ -7,10 +7,6 @@ turns the raw file into a violin chart.
 
 Self-contained: run it by hand on any VM, no orchestrator and no database.
 
-> Status: rebuild in progress. The runner and plot logic land in later phases (see the
-> module docstrings). This is the cleaned project skeleton. The previous atlas-d2k
-> experiment code lives on the `atlas-d2k-experiment` branch.
-
 ## Requirements
 
 - A chaise deployment built with the performance-logging instrumentation and

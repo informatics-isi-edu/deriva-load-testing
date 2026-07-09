@@ -15,9 +15,15 @@ import json
 import random
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Literal, get_args
+from typing import Literal, cast, get_args
 
 AppType = Literal["record", "recordset", "recordedit"]
+
+
+@dataclass
+class PageURLInput:
+    name: str
+    value: str
 
 
 @dataclass
@@ -35,11 +41,14 @@ class PageURL:
     schema_table: str = ""
     filter: str = ""
 
-    # recordedit only: what to do after the form loads. Shape may evolve in the
-    # recordedit phase. action="submit" clicks the submit button; inputs (optional)
-    # fills fields first, e.g. [{"name": "Description", "value": "load test"}].
+    # recordedit only: what the runner does after the form loads.
+    #   "submit" fills `inputs`, clicks Save, and measures the submit;
+    #   "load" (or empty, the default) just measures the form load, no DB write.
+    # inputs must target plain text/number columns and set a genuinely different value
+    # (ermrestjs rejects an update that changes nothing), e.g.
+    #   [{"name": "Description", "value": "load test edit"}].
     action: str = ""
-    inputs: list = field(default_factory=list)
+    inputs: list[PageURLInput] = field(default_factory=list)
 
 
 def load_urls(path: str | Path) -> list[PageURL]:
@@ -64,12 +73,15 @@ def load_urls(path: str | Path) -> list[PageURL]:
         pages.append(
             PageURL(
                 url=entry["url"],
-                app=app,
+                app=cast(AppType, app),
                 identifier=entry.get("identifier", entry["url"]),
                 schema_table=entry.get("schema_table", ""),
                 filter=entry.get("filter", ""),
                 action=entry.get("action", ""),
-                inputs=entry.get("inputs", []) or [],
+                inputs=[
+                    PageURLInput(name=str(x["name"]), value=str(x["value"]))
+                    for x in (entry.get("inputs") or [])
+                ],
             )
         )
     return pages

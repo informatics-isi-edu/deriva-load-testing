@@ -12,12 +12,13 @@ page finished.
 from __future__ import annotations
 
 import asyncio
+import re
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
 
-from playwright.async_api import Error as PlaywrightError
+from playwright.async_api import Error as PlaywrightError, Locator, Page
 
 from deriva_load_testing.urls import PageURL
 
@@ -34,24 +35,16 @@ VIEWPORT = {"width": 1280, "height": 900}
 # this has no effect on the recorded milestone values)
 POLL_INTERVAL = 0.25
 
-# milestones we expect per app, in the order they are reached. a page is "done" once all of
-# them are present; on a timeout, failed_at is the first one still missing. recordset has no
-# fullPageLoad mark of its own (we derive it), so it is not listed here.
-EXPECTED_MILESTONES = {
-    "record": ("navbarLoad", "mainDataLoad", "fullPageLoad"),
-    "recordset": (
-        "navbarLoad",
-        "mainDataLoad",
-        "allFacetsLoaded",
-        "allAggregatesLoaded",
-    ),
-}
+CANONICAL_MILESTONES = ("navbarLoad", "mainDataLoad", "fullPageLoad")
 
 # maps a __chaisePerf key to the VisitResult / CSV column it fills
-_MARK_TO_COLUMN = {
+_CANONICAL_MARKS = {
     "navbarLoad": "navbar_load_ms",
     "mainDataLoad": "main_data_load_ms",
     "fullPageLoad": "full_page_load_ms",
+}
+
+_RECORDSET_DETAIL = {
     "allFacetsLoaded": "all_facets_loaded_ms",
     "allAggregatesLoaded": "all_aggregates_loaded_ms",
 }
@@ -65,20 +58,35 @@ class VisitResult:
     session_id: int
     run: int
     page_order: int
+
     app: str
     identifier: str
     schema_table: str
     filter: str
+
     t0_iso: str
     status: str = "ok"
     failed_at: str | None = None
     error_status: str | None = None
     error_message: str | None = None
+
     navbar_load_ms: float | None = None
     main_data_load_ms: float | None = None
     full_page_load_ms: float | None = None
+
     all_facets_loaded_ms: float | None = None
     all_aggregates_loaded_ms: float | None = None
+
+    submit_ms: float | None = None
+
+
+@dataclass
+class SubmitResult:
+    """Outcome of a recordedit submit action."""
+
+    status: str  # "ok" | "chaise_error" | "timeout"
+    submit_ms: float | None = None
+    error: dict | None = None
 
 
 def parse_cookie(raw: str) -> tuple[str, str]:
@@ -128,9 +136,16 @@ async def new_context(browser, cookie_dict: dict | None):
 
 def _perf_marks(perf) -> dict:
     """The numeric milestone marks present in a __chaisePerf snapshot, keyed by column."""
+    perf = perf or {}
     marks: dict = {}
-    for key, column in _MARK_TO_COLUMN.items():
-        val = (perf or {}).get(key)
+    for key, column in _CANONICAL_MARKS.items():
+        val = perf.get(key)
+        if isinstance(val, (int, float)):
+            marks[column] = float(val)
+
+    rs = (perf.get("detail") or {}).get("recordset") or {}
+    for key, column in _RECORDSET_DETAIL.items():
+        val = rs.get(key)
         if isinstance(val, (int, float)):
             marks[column] = float(val)
     return marks
@@ -139,8 +154,8 @@ def _perf_marks(perf) -> dict:
 def _first_missing(app: str, marks: dict) -> str | None:
     """The first expected milestone (in load order) not yet present, or None if the app's
     load is complete. Single source of truth for both 'are we done' and 'what failed'."""
-    for mark in EXPECTED_MILESTONES.get(app, ()):
-        if _MARK_TO_COLUMN[mark] not in marks:
+    for mark in CANONICAL_MILESTONES:
+        if _CANONICAL_MARKS[mark] not in marks:
             return mark
     return None
 
@@ -171,17 +186,6 @@ def classify_visit(app, perf, timed_out, goto_error=None, error_status=None) -> 
     ``chaise_error``; running out of time is ``timeout``; otherwise ``ok``.
     """
     marks = _perf_marks(perf)
-
-    # recordset has no fullPageLoad mark; derive it from facets/aggregates, never below main
-    if app == "recordset":
-        facets, aggs = (
-            marks.get("all_facets_loaded_ms"),
-            marks.get("all_aggregates_loaded_ms"),
-        )
-        if facets is not None and aggs is not None:
-            full = max(facets, aggs)
-            main = marks.get("main_data_load_ms")
-            marks["full_page_load_ms"] = max(full, main) if main is not None else full
 
     out = {
         "status": "ok",
@@ -216,6 +220,44 @@ def classify_visit(app, perf, timed_out, goto_error=None, error_status=None) -> 
     return out
 
 
+def _input_locator(page: Page, name: str) -> Locator:
+    safe_name = re.sub(r"[^\w-]+", "-", name)
+    return page.locator(f".c_1-{safe_name}")
+
+
+async def _recordedit_submit(
+    page: Page, page_url: PageURL, timeout_s: float
+) -> SubmitResult:
+    for inp in page_url.inputs:
+        await _input_locator(page, inp.name).fill(inp.value)
+
+    t_click = time.monotonic()
+    await page.click("#submit-record-button")
+
+    timeout_ms = timeout_s * 1000
+    nav = asyncio.create_task(
+        page.wait_for_url(re.compile(r"/record/"), timeout=timeout_ms)
+    )
+    fail = asyncio.create_task(
+        page.wait_for_selector(".alert-danger, .alert-warning", timeout=timeout_ms)
+    )
+
+    done, pending = await asyncio.wait({nav, fail}, return_when=asyncio.FIRST_COMPLETED)
+    for t in pending:
+        t.cancel()
+    await asyncio.gather(*pending, return_exceptions=True)
+
+    if nav in done and nav.exception() is None:
+        return SubmitResult(status="ok", submit_ms=(time.monotonic() - t_click) * 1000)
+
+    perf = await page.evaluate(f"() => window.{PERF_GLOBAL} || null")
+    err = (perf or {}).get("error")
+
+    if err:
+        return SubmitResult(status="chaise_error", error=err)
+    return SubmitResult(status="timeout")
+
+
 # --- entry point (called from patterns) ---
 
 
@@ -248,7 +290,7 @@ async def visit_page(
     error_status = None
     timed_out = False
     perf = None
-
+    submit = None
     try:
         start = time.monotonic()
         try:
@@ -268,6 +310,13 @@ async def visit_page(
         if goto_error is None:
             remaining = max(1.0, visit_timeout - (time.monotonic() - start))
             perf, timed_out = await _wait_for_completion(page, page_url.app, remaining)
+
+            # recordedit: once the form is ready, perform the submit action
+            load_ok = not timed_out and not (perf and perf.get("error"))
+            if page_url.app == "recordedit" and page_url.action == "submit" and load_ok:
+                remaining = max(1.0, visit_timeout - (time.monotonic() - start))
+                submit = await _recordedit_submit(page, page_url, remaining)
+
     finally:
         await page.close()
 
@@ -278,4 +327,17 @@ async def visit_page(
     result.error_message = decision["error_message"]
     for column, value in decision["marks"].items():
         setattr(result, column, value)
+
+    if submit is not None:
+        if submit.status == "ok":
+            result.submit_ms = submit.submit_ms
+        elif submit.status == "chaise_error":
+            err = submit.error or {}
+            result.status = "chaise_error"
+            result.failed_at = "submit"
+            result.error_status = err.get("status")
+            result.error_message = truncate(err.get("message"))
+        else:  # timeout
+            result.status = "timeout"
+            result.failed_at = "submit"
     return result

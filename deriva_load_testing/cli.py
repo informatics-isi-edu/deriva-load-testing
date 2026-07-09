@@ -152,18 +152,6 @@ def _build_config(args) -> tuple[RunConfig, bool]:
         )
 
     pool = load_urls(args.url_file)
-    skipped = [p for p in pool if p.app == "recordedit"]
-    pool = [p for p in pool if p.app != "recordedit"]
-    if skipped:
-        print(
-            f"warning: skipping {len(skipped)} recordedit page(s); recordedit support lands in Phase 2c",
-            file=sys.stderr,
-        )
-    if not pool:
-        raise ValueError(
-            "no record/recordset pages to visit (pool is empty after dropping recordedit)"
-        )
-
     if not args.cookie:
         print(
             "warning: no --cookie/LOAD_TEST_COOKIE; chaise pages are usually not anonymous",

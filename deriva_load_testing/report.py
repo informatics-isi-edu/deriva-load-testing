@@ -21,6 +21,7 @@ CSV_COLUMNS = [
     "full_page_load_ms",
     "all_facets_loaded_ms",
     "all_aggregates_loaded_ms",
+    "submit_ms",
     "t0_iso",
     "status",
     "failed_at",
@@ -39,6 +40,8 @@ def _fmt(value) -> str:
 def format_visit(r) -> str:
     """One display line for a single visit."""
     marks = f"navbar={_fmt(r.navbar_load_ms)} main={_fmt(r.main_data_load_ms)} full={_fmt(r.full_page_load_ms)}"
+    if r.submit_ms is not None:
+        marks += f" submit={_fmt(r.submit_ms)}"
     run_label = "warm" if r.run < 0 else f"r{r.run}"
     detail = ""
     if r.status != "ok":
