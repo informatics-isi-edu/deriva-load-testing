@@ -41,6 +41,7 @@ class RunConfig:
     duration_seconds: float | None = None
     loop: bool = False
     headed: bool = False
+    partition_size: int | None = None
 
 
 def _build_runner_parser() -> argparse.ArgumentParser:
@@ -105,6 +106,12 @@ def _build_runner_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--page-size", type=int, help="how many urls from the pool to use")
     p.add_argument(
+        "--partition-size",
+        type=int,
+        help="give each session its own N contiguous pages, in file order "
+        "(default: sessions share the whole pool)",
+    )
+    p.add_argument(
         "--headed",
         action="store_true",
         help="show the browser window instead of headless (debug; needs a display)",
@@ -158,6 +165,26 @@ def _build_config(args) -> tuple[RunConfig, bool]:
         )
 
     pool = load_urls(args.url_file)
+    if args.partition_size is not None:
+        if args.partition_size < 1:
+            raise ValueError("--partition-size must be >= 1")
+        if args.sessions <= 1:
+            raise ValueError(
+                "--partition-size needs --sessions > 1 (it splits the pool across sessions; "
+                "with 1 session there is nothing to split; use --page-size to limit pages)"
+            )
+        need = args.sessions * args.partition_size
+        if len(pool) < need:
+            raise ValueError(
+                f"--partition-size {args.partition_size} x --sessions {args.sessions} needs {need} pages; "
+                f"pool has {len(pool)}"
+            )
+        if len(pool) > need:
+            print(
+                f"note: partition uses the first {need} of {len(pool)} pages "
+                f"({args.sessions} sessions x {args.partition_size})",
+                file=sys.stderr,
+            )
     if not args.cookie:
         print(
             "warning: no --cookie/LOAD_TEST_COOKIE; chaise pages are usually not anonymous",
@@ -185,6 +212,7 @@ def _build_config(args) -> tuple[RunConfig, bool]:
         duration_seconds=_parse_duration(args.duration) if args.duration else None,
         loop=args.loop,
         headed=args.headed,
+        partition_size=args.partition_size,
     )
     return cfg, measured
 

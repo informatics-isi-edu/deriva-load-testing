@@ -88,9 +88,18 @@ async def _heartbeat(stats):
         )
 
 
+def _session_pages(cfg, session_id):
+    """Pages this session walks: its own N contiguous pages (in file order) when
+    --partition-size is set, or the whole (optionally shuffled) pool when sharing."""
+    if cfg.partition_size is not None:
+        chunk = cfg.partition_size
+        return cfg.pool[session_id * chunk : (session_id + 1) * chunk]
+    return ordered(cfg.pool, cfg.order, cfg.seed + session_id, cfg.page_size)
+
+
 async def _measured_session(browser, cfg, think, session_id, on_visit) -> list:
     rng = random.Random(cfg.seed + session_id)
-    pages = ordered(cfg.pool, cfg.order, cfg.seed + session_id, cfg.page_size)
+    pages = _session_pages(cfg, session_id)
     rows: list = []
     shared = (
         await new_context(browser, cfg.cookie_dict) if cfg.cache == "session" else None
@@ -133,7 +142,7 @@ async def _measured_session(browser, cfg, think, session_id, on_visit) -> list:
 
 async def _background_session(browser, cfg, think, session_id, deadline, stats):
     rng = random.Random(cfg.seed + session_id)
-    pages = ordered(cfg.pool, cfg.order, cfg.seed + session_id, cfg.page_size)
+    pages = _session_pages(cfg, session_id)
     shared = (
         await new_context(browser, cfg.cookie_dict) if cfg.cache == "session" else None
     )
