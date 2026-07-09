@@ -77,12 +77,14 @@ async def _visit(browser, cfg, shared_context, page_url, session_id, run, page_o
             await context.close()
 
 
-async def _heartbeat(stats):
+async def _heartbeat(stats, requested):
     """Print running background totals every few seconds so a long load shows it is alive."""
     while True:
         await asyncio.sleep(HEARTBEAT_SECONDS)
+        failed = sum(stats["failures"].values())
         print(
-            f"  ... {stats['visits']} visits, {stats['errors']} non-ok",
+            f"  ... {len(stats['per_session'])}/{requested} sessions active, "
+            f"{stats['visits']} visits, {failed} failed",
             file=sys.stderr,
             flush=True,
         )
@@ -155,8 +157,13 @@ async def _background_session(browser, cfg, think, session_id, deadline, stats):
                     browser, cfg, shared, page_url, session_id, run=-1, page_order=-1
                 )
                 stats["visits"] += 1
+                stats["per_session"][session_id] = (
+                    stats["per_session"].get(session_id, 0) + 1
+                )
                 if res.status != "ok":
-                    stats["errors"] += 1
+                    stats["failures"][res.status] = (
+                        stats["failures"].get(res.status, 0) + 1
+                    )
                 await _think(think, rng)
     finally:
         if shared is not None:
@@ -196,7 +203,7 @@ async def run_background(cfg, stats) -> dict:
     async with async_playwright() as pw:
         browser = await pw.chromium.launch(headless=not cfg.headed)
         try:
-            monitor = asyncio.create_task(_heartbeat(stats))
+            monitor = asyncio.create_task(_heartbeat(stats, cfg.sessions))
             try:
                 await asyncio.gather(
                     *(

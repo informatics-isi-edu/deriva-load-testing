@@ -11,10 +11,13 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import logging
 import os
 import re
 import sys
 from dataclasses import dataclass
+
+from playwright.async_api import Error as PlaywrightError
 
 from deriva_load_testing import report
 from deriva_load_testing.patterns import run_background, run_measured
@@ -217,10 +220,25 @@ def _build_config(args) -> tuple[RunConfig, bool]:
     return cfg, measured
 
 
+def _is_interrupt(exc: BaseException) -> bool:
+    """A Ctrl-C, or the teardown errors it triggers. A terminal Ctrl-C signals the whole
+    process group, so it also kills the Playwright driver, and any in-flight browser call
+    then fails with a TargetClosedError or a bare 'Connection closed' Exception. We treat
+    those as a clean interrupt; anything else is a real error and still surfaces."""
+    return (
+        isinstance(exc, KeyboardInterrupt)
+        or isinstance(exc, PlaywrightError)
+        or "Connection closed while reading from the driver" in str(exc)
+    )
+
+
 # --- entry points (console scripts) ---
 
 
 def main_runner(argv: list[str] | None = None) -> int:
+    # asyncio logs benign teardown warnings (e.g. "pipe closed by peer") when a Ctrl-C kills
+    # the Playwright driver mid-write; they are noise for a CLI, so quiet them.
+    logging.getLogger("asyncio").setLevel(logging.ERROR)
     args = _build_runner_parser().parse_args(argv)
     try:
         cfg, measured = _build_config(args)
@@ -234,29 +252,58 @@ def main_runner(argv: list[str] | None = None) -> int:
             f"cache={cfg.cache}, up to {cfg.visit_timeout:.0f}s per visit",
             file=sys.stderr,
         )
-        rows = asyncio.run(run_measured(cfg, on_visit=report.print_visit))
+        try:
+            rows = asyncio.run(run_measured(cfg, on_visit=report.print_visit))
+        except (KeyboardInterrupt, Exception) as exc:
+            if not _is_interrupt(exc):
+                raise
+            print(
+                "\ninterrupted; measured run needs to finish for a summary",
+                file=sys.stderr,
+            )
+            return 130
         report.print_summary(rows)
         return 0
 
     lifetime = (
-        f"{cfg.duration_seconds:.0f}s"
+        f"for {cfg.duration_seconds:.0f}s"
         if cfg.duration_seconds is not None
         else "until Ctrl-C"
     )
-    print(
-        f"background load: {cfg.sessions} session(s), {len(cfg.pool)} page(s), "
-        f"order={cfg.order}, {lifetime}",
-        file=sys.stderr,
-    )
-    stats = {"visits": 0, "errors": 0}
+    if cfg.partition_size is not None:
+        scope = f"{cfg.sessions} sessions x {cfg.partition_size} pages (partition)"
+    else:
+        scope = (
+            f"{cfg.sessions} sessions sharing {len(cfg.pool)} pages (order={cfg.order})"
+        )
+    print(f"background load: {scope}, {lifetime}", file=sys.stderr)
+
+    stats = {"visits": 0, "per_session": {}, "failures": {}}
+    interrupted = False
     try:
         asyncio.run(run_background(cfg, stats))
-    except KeyboardInterrupt:
-        print("\ninterrupted; stopping background load", file=sys.stderr)
+    except (KeyboardInterrupt, Exception) as exc:
+        if not _is_interrupt(exc):
+            raise
+        interrupted = True
+
+    per = stats["per_session"]
+    failed = sum(stats["failures"].values())
+    ok = stats["visits"] - failed
+    head = "interrupted" if interrupted else "background done"
     print(
-        f"background: {stats['visits']} visits, {stats['errors']} non-ok",
+        f"\n{head}: {stats['visits']} visits ({ok} ok, {failed} failed), "
+        f"{len(per)}/{cfg.sessions} sessions active",
         file=sys.stderr,
     )
+    if per:
+        counts = list(per.values())
+        print(
+            f"  visits/session: min {min(counts)}, max {max(counts)}", file=sys.stderr
+        )
+    if failed:
+        breakdown = "  ".join(f"{k}={v}" for k, v in stats["failures"].items())
+        print(f"  failures by type: {breakdown}", file=sys.stderr)
     return 0
 
 

@@ -57,7 +57,7 @@ def gen_pdb_payload(catalog, catalog_id, fname_prefix="pdb_00009a3q_minimal_v2",
             "filter": f"RID={struct_rid}",
             "action": "submit",
             "inputs": [
-                { "name": "Description", "value": "load test edit {run}-{ts}" }
+                { "name": "pdbx_details", "value": "load test edit {run}-{ts}" }
             ]
         })
         
