@@ -226,10 +226,13 @@ def _input_locator(page: Page, name: str) -> Locator:
 
 
 async def _recordedit_submit(
-    page: Page, page_url: PageURL, timeout_s: float
+    page: Page, page_url: PageURL, timeout_s: float, run: int
 ) -> SubmitResult:
+    ts = str(int(time.time()))
     for inp in page_url.inputs:
-        await _input_locator(page, inp.name).fill(inp.value)
+        # {run}/{ts} let a fixed pool change data each run (else ermrestjs rejects a no-op edit)
+        value = inp.value.replace("{run}", str(run)).replace("{ts}", ts)
+        await _input_locator(page, inp.name).fill(value)
 
     t_click = time.monotonic()
     await page.click("#submit-record-button")
@@ -315,7 +318,7 @@ async def visit_page(
             load_ok = not timed_out and not (perf and perf.get("error"))
             if page_url.app == "recordedit" and page_url.action == "submit" and load_ok:
                 remaining = max(1.0, visit_timeout - (time.monotonic() - start))
-                submit = await _recordedit_submit(page, page_url, remaining)
+                submit = await _recordedit_submit(page, page_url, remaining, run)
 
     finally:
         await page.close()

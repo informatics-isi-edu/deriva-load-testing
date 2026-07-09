@@ -207,7 +207,7 @@ def main_runner(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
         rows = asyncio.run(run_measured(cfg, on_visit=report.print_visit))
-        report.print_tally(rows)
+        report.print_summary(rows)
         return 0
 
     lifetime = (

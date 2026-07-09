@@ -44,9 +44,9 @@ class PageURL:
     # recordedit only: what the runner does after the form loads.
     #   "submit" fills `inputs`, clicks Save, and measures the submit;
     #   "load" (or empty, the default) just measures the form load, no DB write.
-    # inputs must target plain text/number columns and set a genuinely different value
-    # (ermrestjs rejects an update that changes nothing), e.g.
-    #   [{"name": "Description", "value": "load test edit"}].
+    # inputs target plain text/number columns. Use {run} or {ts} in a value so repeated
+    # submits actually change data (ermrestjs rejects an update that changes nothing), e.g.
+    #   [{"name": "Description", "value": "load test {run}"}].
     action: str = ""
     inputs: list[PageURLInput] = field(default_factory=list)
 
