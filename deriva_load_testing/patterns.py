@@ -162,7 +162,7 @@ async def run_measured(cfg, on_visit=None) -> list:
     is called with each VisitResult as it completes, so callers can stream progress."""
     think = parse_think_time(cfg.think_time)
     async with async_playwright() as pw:
-        browser = await pw.chromium.launch(headless=True)
+        browser = await pw.chromium.launch(headless=not cfg.headed)
         try:
             per_session = await asyncio.gather(
                 *(
@@ -185,7 +185,7 @@ async def run_background(cfg, stats) -> dict:
         else None
     )
     async with async_playwright() as pw:
-        browser = await pw.chromium.launch(headless=True)
+        browser = await pw.chromium.launch(headless=not cfg.headed)
         try:
             monitor = asyncio.create_task(_heartbeat(stats))
             try:

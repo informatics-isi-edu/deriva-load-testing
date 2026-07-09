@@ -40,6 +40,7 @@ class RunConfig:
     warmup: int = 0
     duration_seconds: float | None = None
     loop: bool = False
+    headed: bool = False
 
 
 def _build_runner_parser() -> argparse.ArgumentParser:
@@ -103,6 +104,11 @@ def _build_runner_parser() -> argparse.ArgumentParser:
         "--seed", type=int, default=12, help="seed used when --order shuffle"
     )
     p.add_argument("--page-size", type=int, help="how many urls from the pool to use")
+    p.add_argument(
+        "--headed",
+        action="store_true",
+        help="show the browser window instead of headless (debug; needs a display)",
+    )
     return p
 
 
@@ -178,6 +184,7 @@ def _build_config(args) -> tuple[RunConfig, bool]:
         warmup=args.warmup,
         duration_seconds=_parse_duration(args.duration) if args.duration else None,
         loop=args.loop,
+        headed=args.headed,
     )
     return cfg, measured
 
