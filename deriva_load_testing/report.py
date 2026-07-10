@@ -8,6 +8,7 @@ summary a convenience view computed from the same rows.
 from __future__ import annotations
 
 from collections import defaultdict
+from datetime import datetime
 
 import numpy as np
 
@@ -96,6 +97,12 @@ def print_summary(rows) -> None:
     }
 
     print(f"\n=== summary: {total} visits, {len(ok)} ok ===")
+
+    if rows:
+        # wall-clock span: first visit start to last visit start (t0_iso)
+        times = [datetime.fromisoformat(r.t0_iso) for r in rows]
+        secs = int((max(times) - min(times)).total_seconds())
+        print(f"elapsed: {secs // 60}m{secs % 60:02d}s ({secs}s), first to last visit")
 
     print(f"\nper page, over {len(ok)} ok visits:")
     print(_STAT_HEADER)
