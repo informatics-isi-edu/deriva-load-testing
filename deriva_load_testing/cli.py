@@ -17,8 +17,6 @@ import re
 import sys
 from dataclasses import dataclass
 
-from playwright.async_api import Error as PlaywrightError
-
 from deriva_load_testing import report
 from deriva_load_testing.patterns import run_background, run_measured
 from deriva_load_testing.runner import build_cookie
@@ -221,14 +219,17 @@ def _build_config(args) -> tuple[RunConfig, bool]:
 
 
 def _is_interrupt(exc: BaseException) -> bool:
-    """A Ctrl-C, or the teardown errors it triggers. A terminal Ctrl-C signals the whole
-    process group, so it also kills the Playwright driver, and any in-flight browser call
-    then fails with a TargetClosedError or a bare 'Connection closed' Exception. We treat
-    those as a clean interrupt; anything else is a real error and still surfaces."""
+    """A Ctrl-C, or the driver-teardown errors it triggers. A terminal Ctrl-C signals the
+    whole process group, so it kills the Playwright driver too; whatever browser call was in
+    flight then fails with one of these signatures. Matched by message because
+    TargetClosedError is not exported from the public playwright.async_api. A normal
+    TimeoutError (i.e. a real failed visit) matches neither, so it still surfaces."""
+    if isinstance(exc, KeyboardInterrupt):
+        return True
+    text = str(exc)
     return (
-        isinstance(exc, KeyboardInterrupt)
-        or isinstance(exc, PlaywrightError)
-        or "Connection closed while reading from the driver" in str(exc)
+        "Connection closed while reading from the driver" in text
+        or "Target page, context or browser has been closed" in text
     )
 
 

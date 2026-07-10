@@ -229,13 +229,18 @@ async def _recordedit_submit(
     page: Page, page_url: PageURL, timeout_s: float, run: int
 ) -> SubmitResult:
     ts = str(int(time.time()))
-    for inp in page_url.inputs:
-        # {run}/{ts} let a fixed pool change data each run (else ermrestjs rejects a no-op edit)
-        value = inp.value.replace("{run}", str(run)).replace("{ts}", ts)
-        await _input_locator(page, inp.name).fill(value)
-
-    t_click = time.monotonic()
-    await page.click("#submit-record-button")
+    try:
+        for inp in page_url.inputs:
+            # {run}/{ts} let a fixed pool change data each run (else ermrestjs rejects a no-op edit)
+            value = inp.value.replace("{run}", str(run)).replace("{ts}", ts)
+            await _input_locator(page, inp.name).fill(value)
+        t_click = time.monotonic()
+        await page.click("#submit-record-button")
+    except PlaywrightError as exc:
+        # a field never rendered or Save never enabled; record it, do not crash the run
+        return SubmitResult(
+            status="timeout", error={"message": str(exc).splitlines()[0]}
+        )
 
     timeout_ms = timeout_s * 1000
     nav = asyncio.create_task(
@@ -343,4 +348,6 @@ async def visit_page(
         else:  # timeout
             result.status = "timeout"
             result.failed_at = "submit"
+            if submit.error:
+                result.error_message = truncate(submit.error.get("message"))
     return result
