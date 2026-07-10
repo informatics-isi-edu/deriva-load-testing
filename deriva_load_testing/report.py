@@ -134,7 +134,3 @@ def print_summary(rows) -> None:
         f"{status}={counts[status]}" for status in STATUS_ORDER if status != "ok"
     )
     print(f"\nfailures: {total - len(ok)}/{total}  ({fails})")
-
-
-# TODO(steps 2-3): write_csv (existing CSV_COLUMNS), then write_json (rich archive:
-#   re-add per-visit perf_raw + failed_responses; honor --capture-bodies).

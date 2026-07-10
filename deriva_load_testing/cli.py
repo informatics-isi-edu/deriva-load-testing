@@ -11,15 +11,18 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import csv
 import logging
 import os
 import re
 import sys
 from dataclasses import dataclass
+from pathlib import Path
+from typing import TextIO
 
 from deriva_load_testing import report
 from deriva_load_testing.patterns import run_background, run_measured
-from deriva_load_testing.runner import build_cookie
+from deriva_load_testing.runner import VisitResult, build_cookie
 from deriva_load_testing.urls import load_urls
 
 
@@ -71,7 +74,7 @@ def _build_runner_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--visit-timeout", type=float, default=60.0, help="per-visit budget (seconds)"
     )
-    p.add_argument("--csv", help="write the lean raw table here")
+    p.add_argument("--csv", type=Path, help="write the lean raw table here")
     p.add_argument("--json", help="write the full-resolution archive here")
     p.add_argument(
         "--capture-bodies",
@@ -253,18 +256,41 @@ def main_runner(argv: list[str] | None = None) -> int:
             f"cache={cfg.cache}, up to {cfg.visit_timeout:.0f}s per visit",
             file=sys.stderr,
         )
+
+        csv_file: TextIO | None = None
+        csv_writer: csv.DictWriter | None = None
+        if args.csv:
+            args.csv.parent.mkdir(parents=True, exist_ok=True)
+            csv_file = open(args.csv, "w", newline="")
+            csv_writer = csv.DictWriter(csv_file, fieldnames=report.CSV_COLUMNS)
+            csv_writer.writeheader()
+
+        def on_visit(r: VisitResult) -> None:
+            report.print_visit(r)
+            if csv_writer is not None and csv_file is not None:
+                csv_writer.writerow({c: getattr(r, c) for c in report.CSV_COLUMNS})
+                csv_file.flush()
+
         try:
-            rows = asyncio.run(run_measured(cfg, on_visit=report.print_visit))
-        except (KeyboardInterrupt, Exception) as exc:
-            if not _is_interrupt(exc):
-                raise
-            print(
-                "\ninterrupted; measured run needs to finish for a summary",
-                file=sys.stderr,
-            )
-            return 130
-        report.print_summary(rows)
-        return 0
+            try:
+                rows = asyncio.run(run_measured(cfg, on_visit=on_visit))
+            except (KeyboardInterrupt, Exception) as exc:
+                if not _is_interrupt(exc):
+                    raise
+                print(
+                    "\ninterrupted; measured run needs to finish for a summary",
+                    file=sys.stderr,
+                )
+                if args.csv:
+                    print(f"partial results saved to {args.csv}", file=sys.stderr)
+                return 130
+            report.print_summary(rows)
+            if args.csv:
+                print(f"wrote {len(rows)} visits to {args.csv}", file=sys.stderr)
+            return 0
+        finally:
+            if csv_file is not None:
+                csv_file.close()
 
     lifetime = (
         f"for {cfg.duration_seconds:.0f}s"
