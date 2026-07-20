@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import TextIO
 
 from deriva_load_testing import report
-from deriva_load_testing.patterns import run_background, run_measured
+from deriva_load_testing.patterns import parse_think_time, run_background, run_measured
 from deriva_load_testing.runner import VisitResult, build_cookie
 from deriva_load_testing.urls import load_urls
 
@@ -250,10 +250,19 @@ def main_runner(argv: list[str] | None = None) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 2
 
+    # echo the parsed think-time so a run visibly confirms the flag was understood
+    tt = parse_think_time(cfg.think_time)
+    if tt:
+        lo, hi = tt
+        rng = f"{lo:g}s" if lo == hi else f"{lo:g} to {hi:g}s"
+        think_clause = f", think-time {rng} between visits"
+    else:
+        think_clause = ", no think-time"
+
     if measured:
         print(
             f"measuring: {len(cfg.pool)} page(s) x {cfg.runs} run(s), {cfg.sessions} session(s), "
-            f"cache={cfg.cache}, up to {cfg.visit_timeout:.0f}s per visit",
+            f"cache={cfg.cache}, up to {cfg.visit_timeout:.0f}s per visit{think_clause}",
             file=sys.stderr,
         )
 
@@ -303,7 +312,7 @@ def main_runner(argv: list[str] | None = None) -> int:
         scope = (
             f"{cfg.sessions} sessions sharing {len(cfg.pool)} pages (order={cfg.order})"
         )
-    print(f"background load: {scope}, {lifetime}", file=sys.stderr)
+    print(f"background load: {scope}, {lifetime}{think_clause}", file=sys.stderr)
 
     stats = {"visits": 0, "per_session": {}, "failures": {}}
     interrupted = False
