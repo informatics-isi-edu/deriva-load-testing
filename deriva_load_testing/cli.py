@@ -1,10 +1,9 @@
-"""Command-line entry points.
+"""Command-line entry point.
 
-``deriva-load-test``  -> main_runner  (run a load / measurement experiment)
-``deriva-load-plot``  -> main_plot    (render a violin from a results CSV)
+``deriva-load-test`` -> main_runner (run a load / measurement experiment).
 
-``main_runner`` / ``main_plot`` at the bottom are the console-script entry points; the
-parsers, config, and validation helpers above them are called only from there.
+``main_runner`` at the bottom is the console-script entry point; the parser, config, and
+validation helpers above it are called only from there.
 """
 
 from __future__ import annotations
@@ -75,12 +74,6 @@ def _build_runner_parser() -> argparse.ArgumentParser:
         "--visit-timeout", type=float, default=60.0, help="per-visit budget (seconds)"
     )
     p.add_argument("--csv", type=Path, help="write the lean raw table here")
-    p.add_argument("--json", help="write the full-resolution archive here")
-    p.add_argument(
-        "--capture-bodies",
-        action="store_true",
-        help="store truncated failed-response bodies (json only)",
-    )
 
     # lifetime: a finite measured run (main) vs a background load generator
     p.add_argument(
@@ -120,22 +113,6 @@ def _build_runner_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="show the browser window instead of headless (debug; needs a display)",
     )
-    return p
-
-
-def _build_plot_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(
-        prog="deriva-load-plot",
-        description="Render a violin chart from a results CSV.",
-    )
-    p.add_argument("csv", help="the raw CSV written by deriva-load-test")
-    p.add_argument("--metric", choices=["navbar", "main", "full"], default="main")
-    p.add_argument(
-        "--keep-incomplete",
-        action="store_true",
-        help="do not drop runs that have a failed visit",
-    )
-    p.add_argument("--out", default="violin.html", help="output .html or .png")
     return p
 
 
@@ -194,12 +171,6 @@ def _build_config(args) -> tuple[RunConfig, bool]:
             "warning: no --cookie/LOAD_TEST_COOKIE; chaise pages are usually not anonymous",
             file=sys.stderr,
         )
-    if args.capture_bodies:
-        print(
-            "note: --capture-bodies takes effect in Phase 3 (the JSON archive)",
-            file=sys.stderr,
-        )
-
     cfg = RunConfig(
         base_url=args.base_url,
         cookie_dict=build_cookie(args.cookie, args.base_url) if args.cookie else None,
@@ -341,10 +312,3 @@ def main_runner(argv: list[str] | None = None) -> int:
         breakdown = "  ".join(f"{k}={v}" for k, v in stats["failures"].items())
         print(f"  failures by type: {breakdown}", file=sys.stderr)
     return 0
-
-
-def main_plot(argv: list[str] | None = None) -> int:
-    args = _build_plot_parser().parse_args(argv)
-    raise NotImplementedError(
-        f"plot lands in Phase 4. parsed csv={args.csv!r}, metric={args.metric!r}."
-    )

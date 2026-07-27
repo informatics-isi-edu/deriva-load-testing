@@ -5,14 +5,10 @@ description = "Generic load testing tool for chaise page performance."
 requires-python = ">=3.11"
 dependencies = [
     "playwright>=1.44",
-    "pandas>=2.2",
-    "plotly>=5.22",
-    "kaleido>=0.2",
 ]
 
 [project.scripts]
 deriva-load-test = "deriva_load_testing.cli:main_runner"
-deriva-load-plot = "deriva_load_testing.cli:main_plot"
 
 [dependency-groups]
 dev = ["ruff>=0.13"]

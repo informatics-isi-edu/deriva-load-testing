@@ -2,8 +2,7 @@
 
 A generic load testing tool for [chaise](https://github.com/informatics-isi-edu/chaise)
 page performance. It opens chaise pages in headless Chromium, reads chaise's own load
-milestones, and writes the raw timings to a file plus a summary. A companion command
-turns the raw file into a violin chart.
+milestones, and writes the raw timings to a file plus a summary.
 
 Self-contained: run it by hand on any VM, no orchestrator and no database.
 
@@ -59,17 +58,26 @@ uv run deriva-load-test --base-url https://HOST/chaise/ \
 # measurement (e.g. your laptop): after the load is running
 uv run deriva-load-test --base-url https://HOST/chaise/ \
   --url-file urls/main.json --sessions 1 --runs 20 \
-  --cookie "webauthn=..." --csv results.csv --json results.json
+  --cookie "webauthn=..." --csv results.csv
 ```
 
-## Output and charts
+## Running a real load test
 
-`--csv` is the lean per-visit table, `--json` is the full-resolution archive. The raw file
-is the source of truth.
+To stress a server you usually need several generator boxes plus a separate measured client. The flags that matter for that:
 
-```bash
-uv run deriva-load-plot results.csv --metric main --out violin.html
-```
+- `--partition-size N` gives each session its own N contiguous URLs, so sessions and boxes do not overlap. We use `--partition-size 2` (one read plus one edit per session).
+- `--loop` runs the background generator until Ctrl-C. `--duration 20m` is the timed alternative.
+- `--warmup 1` runs an unrecorded pass before the measured runs.
+- `--visit-timeout` caps each page in seconds. Raise it under heavy load so slow pages are not counted as failures.
+
+Capacity: headless Chromium costs about 1 vCPU per session, so a 16 vCPU box delivers about 11 sessions before it saturates and under-delivers. Use enough boxes and watch each with `vmstat 1`.
+
+See [docs/example-run.md](docs/example-run.md) for a full end to end walkthrough.
+
+## Output
+
+`--csv` is the per-visit table and the source of truth. The run also prints a summary
+(per-metric mean, median, p95 across runs).
 
 ## URL list
 
