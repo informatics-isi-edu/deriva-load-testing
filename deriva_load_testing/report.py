@@ -1,16 +1,13 @@
-"""Output: stdout progress + summary, and (later) the raw CSV / JSON writers.
-
-Per-visit streaming (``print_visit``) and the stats summary (``print_summary``) are done.
-The CSV and JSON file writers come next; the raw file will be the source of truth, the
-summary a convenience view computed from the same rows.
+"""Output: stdout progress (``print_visit``), the stats summary (``print_summary``), and the
+CSV column list (``CSV_COLUMNS``). The CSV is the source of truth, the summary a convenience
+view computed from the same rows.
 """
 
 from __future__ import annotations
 
+import statistics
 from collections import defaultdict
 from datetime import datetime
-
-import numpy as np
 
 # CSV columns (lean, one row per page visit):
 CSV_COLUMNS = [
@@ -52,14 +49,25 @@ def _fmt(value) -> str:
     return "-" if value is None else f"{value:.0f}"
 
 
+def _percentile(sorted_vals, p):
+    """Linear-interpolated percentile (matches numpy's default) on a pre-sorted list."""
+    if len(sorted_vals) == 1:
+        return sorted_vals[0]
+    k = (len(sorted_vals) - 1) * (p / 100)
+    lo = int(k)
+    hi = min(lo + 1, len(sorted_vals) - 1)
+    return sorted_vals[lo] + (sorted_vals[hi] - sorted_vals[lo]) * (k - lo)
+
+
 def _stat_line(label, vals):
     """One stats row (mean/med/min/max/p95/p99, ms) for a list of values, or None if empty."""
     if not vals:
         return None
-    a = np.array(vals, dtype=float)
+    s = sorted(float(v) for v in vals)
+    n = len(s)
     return (
-        f"{label:<7}{len(vals):>5}{a.mean():>8.0f}{np.median(a):>8.0f}"
-        f"{a.min():>8.0f}{a.max():>8.0f}{np.percentile(a, 95):>8.0f}{np.percentile(a, 99):>8.0f}"
+        f"{label:<7}{n:>5}{sum(s) / n:>8.0f}{statistics.median(s):>8.0f}"
+        f"{s[0]:>8.0f}{s[-1]:>8.0f}{_percentile(s, 95):>8.0f}{_percentile(s, 99):>8.0f}"
     )
 
 

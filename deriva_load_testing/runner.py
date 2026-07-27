@@ -52,8 +52,7 @@ _RECORDSET_DETAIL = {
 
 @dataclass
 class VisitResult:
-    """One page visit; fields map 1:1 to ``report.CSV_COLUMNS``. The Phase 3 JSON archive
-    will add richer extras (raw perf snapshot, failed responses) here."""
+    """One page visit; fields map 1:1 to ``report.CSV_COLUMNS``."""
 
     session_id: int
     run: int
