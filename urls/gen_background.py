@@ -1,4 +1,10 @@
 #!/usr/bin/python3
+"""PDB-specific helper that builds and splits the background URL pool.
+
+Not a generic part of the tool: it queries the PDB catalog for `pdb_00009a3q_minimal_v2_*`
+entries and builds record + recordedit pairs from PDB:entry / PDB:struct. Adapt the catalog,
+tables, filename pattern, and rank range for another deployment.
+"""
 
 import json
 import sys
